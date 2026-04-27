@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tools</title>
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #ffffff;
+    --border: #e6e2d5;
+    --ink: #1a1a1a;
+    --muted: #757575;
+    --accent: #003349;
+  }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  main {
+    max-width: 36rem;
+    margin: 3rem auto;
+    padding: 0 1.25rem;
+  }
+  h1 { font-size: 1.5rem; margin: 0 0 .25rem; }
+  p.lede { color: var(--muted); margin-top: 0; }
+  ul { padding-left: 1.25rem; }
+  li { margin: .35rem 0; }
+  a { color: var(--accent); }
+  a:hover { text-decoration-thickness: 2px; }
+  .desc { color: var(--muted); font-size: .9rem; }
+</style>
+</head>
+<body>
+<main>
+  <h1>tools</h1>
+  <p class="lede">Small browser tools and prototypes.</p>
+  <ul>
+    <li>
+      <a href="fiscal/">Fiscal calendar</a>
+      <div class="desc">La-Z-Boy 5-4-4 (NRF retail) calendar with 53-week-year handling.</div>
+    </li>
+  </ul>
+  <p class="desc"><small>Source: <a href="https://github.com/4toddt/tools">github.com/4toddt/tools</a></small></p>
+</main>
+</body>
+</html>

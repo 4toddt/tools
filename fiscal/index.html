@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiscal Calendar</title>
+<meta name="description" content="La-Z-Boy 5-4-4 fiscal calendar (NRF retail style). Last Saturday of April year-end, with a 53rd week added when the calendar requires it.">
+<style>
+  /* La-Z-Boy brand palette
+     navy   #003349   primary ink / accent
+     rust   #BD472A   secondary accent (today, current)
+     cream  #F5F3EE   page background
+     cream2 #E6E2D5   borders / dividers
+  */
+  :root {
+    --bg: #F5F3EE;
+    --surface: #ffffff;
+    --border: #E6E2D5;
+    --border-soft: #EEEAE0;
+    --ink: #1a1a1a;
+    --ink-soft: #404040;
+    --muted: #757575;
+    --muted-soft: #B0B0B0;
+    --accent: #003349;       /* navy */
+    --accent-hover: #002435;
+    --hot: #BD472A;          /* rust — today / current */
+    --hot-soft: #F7E3DE;
+    --hot-edge: #EDB8AB;
+    --row-current: #FBEFE9;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-feature-settings: "tnum" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+
+  /* ===== Top bar ===== */
+
+  header.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+
+  .brand {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--ink);
+    letter-spacing: -0.005em;
+  }
+  .brand .sep { color: var(--muted-soft); margin: 0 .5em; font-weight: 400; }
+  .brand .tag { color: var(--muted); font-weight: 400; }
+
+  .controls {
+    display: flex;
+    gap: .4rem;
+    align-items: center;
+  }
+
+  .controls button,
+  .controls select {
+    font: inherit;
+    font-size: .85rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: .42rem .7rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: border-color 120ms ease, background 120ms ease;
+    font-variant-numeric: tabular-nums;
+  }
+  .controls button:hover,
+  .controls select:hover {
+    border-color: var(--accent);
+  }
+  .controls button:focus-visible,
+  .controls select:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+  .controls .nav { padding: .42rem .6rem; min-width: 2rem; }
+  .controls #today-btn {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+  .controls #today-btn:hover {
+    background: var(--accent-hover);
+    border-color: var(--accent-hover);
+  }
+
+  /* ===== Hero ===== */
+
+  .hero {
+    display: flex;
+    align-items: baseline;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .fy-display {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fy-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .25rem 1.5rem;
+    font-size: .88rem;
+    color: var(--ink-soft);
+  }
+  .fy-meta .item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: .4rem;
+  }
+  .fy-meta .label {
+    color: var(--muted);
+    font-size: .78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .fy-meta .value {
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+  .badge-53 {
+    display: inline-block;
+    background: var(--accent);
+    color: #fff;
+    font-size: .7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: .15rem .45rem;
+    border-radius: 3px;
+    margin-left: .25rem;
+  }
+
+  /* ===== Today line ===== */
+
+  .today-line {
+    margin: 0 0 1.5rem;
+    padding: .55rem .85rem;
+    background: var(--hot-soft);
+    border-left: 3px solid var(--hot);
+    border-radius: 0 4px 4px 0;
+    font-size: .85rem;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .today-line.hidden { display: none; }
+  .today-line strong { color: var(--hot); font-weight: 600; }
+
+  /* ===== Quarters grid ===== */
+
+  .quarters {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+  }
+  @media (max-width: 880px) {
+    .quarters { grid-template-columns: 1fr; gap: 1rem; }
+  }
+
+  .quarter {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.1rem 1.1rem .9rem;
+  }
+  .quarter.current {
+    border-color: var(--hot);
+    box-shadow: inset 0 0 0 1px var(--hot);
+  }
+
+  .q-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-bottom: .65rem;
+    margin-bottom: .85rem;
+    border-bottom: 1px solid var(--border-soft);
+  }
+  .q-title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--accent);
+    letter-spacing: -0.005em;
+  }
+  .q-title .q-current-tag {
+    font-size: .65rem;
+    font-weight: 600;
+    color: #fff;
+    background: var(--hot);
+    padding: .12rem .42rem;
+    border-radius: 3px;
+    vertical-align: 2px;
+    margin-left: .4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .q-dates {
+    font-size: .78rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .months {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* ===== Month ===== */
+
+  .month {
+    border-radius: 4px;
+  }
+  .month.current {
+    background: var(--row-current);
+    margin: -.4rem -.5rem;
+    padding: .4rem .5rem;
+  }
+
+  .m-header {
+    display: flex;
+    align-items: baseline;
+    gap: .55rem;
+    margin-bottom: .15rem;
+  }
+  .fm-num {
+    font-size: .68rem;
+    font-weight: 600;
+    color: var(--muted);
+    background: var(--border-soft);
+    padding: .1rem .38rem;
+    border-radius: 3px;
+    letter-spacing: 0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+  .month.current .fm-num {
+    background: var(--hot);
+    color: #fff;
+  }
+  .m-name {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--ink);
+  }
+  .m-weeks {
+    margin-left: auto;
+    font-size: .72rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+  .m-dates {
+    font-size: .73rem;
+    color: var(--muted);
+    margin-bottom: .4rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== Day grid ===== */
+
+  .day-grid {
+    width: 100%;
+    border-collapse: collapse;
+    font: 500 .8rem/1.2 ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+    font-variant-numeric: tabular-nums;
+    table-layout: fixed;
+  }
+  .day-grid th {
+    font-family: system-ui, sans-serif;
+    font-size: .62rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    text-align: center;
+    padding: .3rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .day-grid th.wk { color: var(--accent); }
+
+  .day-grid td {
+    text-align: center;
+    padding: .35rem 0;
+    color: var(--ink);
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+  }
+  .day-grid tr:last-child td { border-bottom: none; }
+
+  .day-grid td.spillover { color: var(--muted-soft); }
+  .day-grid td.month-end { font-weight: 700; }
+  .day-grid td.first-of-month { font-weight: 700; }
+  .day-grid td.first-of-month::after {
+    content: attr(data-month);
+    position: absolute;
+    top: -0.2em;
+    right: 0;
+    font-family: system-ui, sans-serif;
+    font-size: .54rem;
+    color: var(--muted);
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    transform: translateX(50%);
+  }
+
+  .day-grid td.today {
+    background: var(--hot);
+    color: #fff;
+    border-radius: 3px;
+    font-weight: 700;
+  }
+  .day-grid td.today::after { color: rgba(255,255,255,.85); }
+
+  .day-grid tr.current-week td:not(.today):not(.wk-num) {
+    background: var(--row-current);
+  }
+
+  .day-grid td.wk-num {
+    color: var(--accent);
+    font-size: .72rem;
+    font-weight: 600;
+    border-left: 1px solid var(--border);
+    text-align: right;
+    padding-right: .3rem;
+    width: 2.4rem;
+  }
+
+  /* ===== Footer ===== */
+
+  footer {
+    margin-top: 2.75rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border);
+    font-size: .85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  footer p { margin: 0 0 .7rem; max-width: 70ch; }
+  footer strong { color: var(--ink); font-weight: 600; }
+  footer .keys {
+    font-size: .8rem;
+    color: var(--muted);
+  }
+  footer kbd {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    padding: .05em .4em;
+    border-radius: 3px;
+    font: inherit;
+    font-size: .85em;
+    color: var(--ink-soft);
+  }
+  footer code {
+    background: var(--border-soft);
+    padding: .05em .35em;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .85em;
+  }
+
+  /* ===== Print ===== */
+
+  @media print {
+    body { background: white; }
+    .controls, .today-line, footer .keys { display: none !important; }
+    .hero { padding-bottom: .75rem; margin-bottom: .75rem; }
+    .quarters { gap: .6rem; }
+    .quarter { border: 1px solid #ccc; break-inside: avoid; padding: .6rem; }
+    .fy-display { font-size: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <p class="brand">Fiscal Calendar<span class="sep">·</span><span class="tag">5-4-4 retail (NRF) calendar</span></p>
+    <div class="controls">
+      <button class="nav" id="prev-btn" title="Previous fiscal year (←)" aria-label="Previous year">←</button>
+      <select id="year-select" aria-label="Select fiscal year"></select>
+      <button class="nav" id="next-btn" title="Next fiscal year (→)" aria-label="Next year">→</button>
+      <button id="today-btn" title="Jump to current fiscal year (T)">Today</button>
+    </div>
+  </header>
+
+  <section class="hero">
+    <h1 class="fy-display" id="fy-display">FY—</h1>
+    <div class="fy-meta">
+      <span class="item"><span class="label">Starts</span><span class="value" id="meta-start">—</span></span>
+      <span class="item"><span class="label">Ends</span><span class="value" id="meta-end">—</span></span>
+      <span class="item"><span class="label">Weeks</span><span class="value" id="meta-weeks">—</span><span class="badge-53" id="meta-53" style="display:none">53-wk</span></span>
+      <span class="item"><span class="label">Q-ends</span><span class="value" id="meta-qends">—</span></span>
+    </div>
+  </section>
+
+  <p class="today-line hidden" id="today-line" role="status"></p>
+
+  <div class="quarters" id="quarters"></div>
+
+  <footer>
+    <p><strong>How it works.</strong> Each fiscal year ends on the last Saturday of April. Fiscal weeks run Sunday through Saturday. Each quarter is 13 weeks, split as 5+4+4 (the first month of every quarter gets the extra week). Fiscal months align to weeks, not to calendar months, so they almost always start a few days before or after the 1st.</p>
+    <p><strong>Why some years have 53 weeks.</strong> A normal fiscal year is 52 weeks (364 days), one or two days short of a calendar year, so the year-end Saturday drifts earlier in April each year. Once it would drift before April 24 (the earliest a "last Saturday of April" can fall in a 30-day month), the rule snaps forward to April 29 or 30, adding a 53rd week. The extra week is appended to fiscal month 12 (April), making Q4 a 5-4-5 instead of 5-4-4. Equivalently: 53-week years occur whenever April has 5 Saturdays and the prior year-end was on the 4th Saturday.</p>
+    <p class="keys"><kbd>←</kbd> <kbd>→</kbd> change year &nbsp;·&nbsp; <kbd>T</kbd> jump to today &nbsp;·&nbsp; URL hash <code>#fy=2027</code> bookmarks any year</p>
+  </footer>
+</main>
+
+<script>
+  // ===== Calendar math =====
+
+  function lastSatOfApril(year) {
+    const apr30 = new Date(year, 3, 30);
+    const dow = apr30.getDay(); // 0=Sun, 6=Sat
+    const daysBack = (dow - 6 + 7) % 7;
+    return new Date(year, 3, 30 - daysBack);
+  }
+  function fyEnd(fy)   { return lastSatOfApril(fy); }
+  function fyStart(fy) {
+    const prev = lastSatOfApril(fy - 1);
+    return new Date(prev.getFullYear(), prev.getMonth(), prev.getDate() + 1);
+  }
+  function fyWeeks(fy) {
+    const days = (fyEnd(fy) - fyStart(fy)) / 86400000 + 1;
+    return Math.round(days / 7);
+  }
+  function fiscalMonths(fy) {
+    const names    = ['May','Jun','Jul','Aug','Sep','Oct','Nov','Dec','Jan','Feb','Mar','Apr'];
+    const calMonth = [4,5,6,7,8,9,10,11,0,1,2,3]; // JS 0-indexed
+    const pattern  = [5,4,4, 5,4,4, 5,4,4, 5,4,4];
+    if (fyWeeks(fy) === 53) pattern[11] = 5;
+    const months = [];
+    let cur = fyStart(fy);
+    let week = 0;
+    for (let i = 0; i < 12; i++) {
+      const start = new Date(cur);
+      const end   = new Date(cur);
+      end.setDate(end.getDate() + 7 * pattern[i] - 1);
+      months.push({
+        fm: i + 1, name: names[i], calMonth: calMonth[i],
+        quarter: Math.floor(i/3) + 1, weeks: pattern[i],
+        start, end,
+        weekStart: week + 1, weekEnd: week + pattern[i]
+      });
+      cur = new Date(end);
+      cur.setDate(cur.getDate() + 1);
+      week += pattern[i];
+    }
+    return months;
+  }
+  function currentFY(date = new Date()) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const y = d.getFullYear();
+    const lastSat = lastSatOfApril(y);
+    return d.getTime() <= lastSat.getTime() ? y : y + 1;
+  }
+
+  // ===== Formatters =====
+
+  function ord(n) {
+    const s = ['th','st','nd','rd'], v = n % 100;
+    return n + (s[(v - 20) % 10] || s[v] || s[0]);
+  }
+  function fmtDate(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function fmtDateShort(d) {
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // ===== Render =====
+
+  const MIN_FY = 1998;
+  const MAX_FY = 2050;
+  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+  function render(fy) {
+    const months = fiscalMonths(fy);
+    const weeks  = fyWeeks(fy);
+    const start  = fyStart(fy);
+    const end    = fyEnd(fy);
+    const today  = new Date();
+    today.setHours(0,0,0,0);
+
+    // Hero
+    document.getElementById('fy-display').textContent = `FY${fy}`;
+    document.getElementById('meta-start').textContent = fmtDate(start);
+    document.getElementById('meta-end').textContent   = fmtDate(end);
+    document.getElementById('meta-weeks').textContent = `${weeks}`;
+    const qEnds = months.filter(m => m.fm % 3 === 0).map(m => fmtDateShort(m.end)).join(' · ');
+    document.getElementById('meta-qends').textContent = qEnds;
+    document.getElementById('meta-53').style.display = weeks === 53 ? '' : 'none';
+    document.title = `FY${fy} · Fiscal Calendar`;
+
+    // Today line (only when displayed FY contains today)
+    const inFY = today >= start && today <= end;
+    const line = document.getElementById('today-line');
+    if (inFY) {
+      const tm = months.find(m => today >= m.start && today <= m.end);
+      const dayInFY = Math.floor((today - start) / 86400000);
+      const fwk = Math.floor(dayInFY / 7) + 1;
+      const dayName = today.toLocaleDateString('en-US', { weekday: 'long' });
+      const dateStr = today.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+      line.innerHTML =
+        `<strong>Today</strong> · ${dayName}, ${dateStr} &nbsp;·&nbsp; Wk <strong>${fwk}</strong> · <strong>${tm.name.toUpperCase()}</strong> (M${tm.fm}) · <strong>Q${tm.quarter}</strong>`;
+      line.classList.remove('hidden');
+    } else {
+      line.classList.add('hidden');
+    }
+
+    // Quarters
+    const grid = document.getElementById('quarters');
+    grid.innerHTML = '';
+    for (let q = 1; q <= 4; q++) {
+      const qMonths = months.filter(m => m.quarter === q);
+      const qStart = qMonths[0].start;
+      const qEnd   = qMonths[2].end;
+      const isCurrentQ = inFY && qMonths.some(m => today >= m.start && today <= m.end);
+
+      const sec = document.createElement('section');
+      sec.className = 'quarter' + (isCurrentQ ? ' current' : '');
+      sec.innerHTML = `
+        <header class="q-header">
+          <h2 class="q-title">Q${q}${isCurrentQ ? '<span class="q-current-tag">current</span>' : ''}</h2>
+          <span class="q-dates">${fmtDateShort(qStart)} → ${fmtDateShort(qEnd)}</span>
+        </header>
+        <div class="months"></div>
+      `;
+      const monthsContainer = sec.querySelector('.months');
+      qMonths.forEach(m => monthsContainer.appendChild(renderMonth(m, today, inFY)));
+      grid.appendChild(sec);
+    }
+
+    // URL + select sync
+    if (location.hash !== `#fy=${fy}`) {
+      history.replaceState(null, '', `#fy=${fy}`);
+    }
+    document.getElementById('year-select').value = String(fy);
+  }
+
+  function renderMonth(m, today, todayInFY) {
+    const isCurrent = todayInFY && today >= m.start && today <= m.end;
+    const wrapper = document.createElement('div');
+    wrapper.className = 'month' + (isCurrent ? ' current' : '');
+
+    let rowsHtml = '';
+    for (let w = 0; w < m.weeks; w++) {
+      let isCurrentWeek = false;
+      let cells = '';
+      for (let d = 0; d < 7; d++) {
+        const date = new Date(m.start);
+        date.setDate(date.getDate() + w * 7 + d);
+        const isToday = date.getTime() === today.getTime();
+        if (isToday) isCurrentWeek = true;
+        const isPrimary = date.getMonth() === m.calMonth;
+        const isMonthEnd = (d === 6 && w === m.weeks - 1);
+        const isFirstOfMonth = date.getDate() === 1;
+        const cls = [
+          !isPrimary ? 'spillover' : '',
+          isMonthEnd ? 'month-end' : '',
+          isFirstOfMonth ? 'first-of-month' : '',
+          isToday ? 'today' : ''
+        ].filter(Boolean).join(' ');
+        const dataAttr = isFirstOfMonth ? ` data-month="${MONTH_ABBR[date.getMonth()]}"` : '';
+        cells += `<td${cls ? ` class="${cls}"` : ''}${dataAttr}>${date.getDate()}</td>`;
+      }
+      cells += `<td class="wk-num">${ord(m.weekStart + w)}</td>`;
+      rowsHtml += `<tr${isCurrentWeek ? ' class="current-week"' : ''}>${cells}</tr>`;
+    }
+
+    wrapper.innerHTML = `
+      <header class="m-header">
+        <span class="fm-num">M${m.fm}</span>
+        <h3 class="m-name">${m.name}</h3>
+        <span class="m-weeks">${m.weeks} wk · ${ord(m.weekStart)}–${ord(m.weekEnd)}</span>
+      </header>
+      <div class="m-dates">${fmtDateShort(m.start)} → ${fmtDateShort(m.end)}</div>
+      <table class="day-grid">
+        <thead><tr>
+          <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th class="wk">Wk</th>
+        </tr></thead>
+        <tbody>${rowsHtml}</tbody>
+      </table>
+    `;
+    return wrapper;
+  }
+
+  // ===== Init =====
+
+  let displayedFY = currentFY();
+
+  function init() {
+    const sel = document.getElementById('year-select');
+    for (let fy = MIN_FY; fy <= MAX_FY; fy++) {
+      const opt = document.createElement('option');
+      opt.value = String(fy);
+      opt.textContent = `FY${fy}` + (fyWeeks(fy) === 53 ? ' · 53wk' : '');
+      sel.appendChild(opt);
+    }
+
+    const m = location.hash.match(/fy=(\d{4})/);
+    if (m) {
+      const fy = parseInt(m[1]);
+      if (fy >= MIN_FY && fy <= MAX_FY) displayedFY = fy;
+    }
+    render(displayedFY);
+
+    document.getElementById('prev-btn').addEventListener('click', () => {
+      if (displayedFY > MIN_FY) render(--displayedFY);
+    });
+    document.getElementById('next-btn').addEventListener('click', () => {
+      if (displayedFY < MAX_FY) render(++displayedFY);
+    });
+    document.getElementById('today-btn').addEventListener('click', () => {
+      displayedFY = currentFY();
+      render(displayedFY);
+    });
+    document.getElementById('year-select').addEventListener('change', (e) => {
+      displayedFY = parseInt(e.target.value);
+      render(displayedFY);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      const tag = e.target.tagName;
+      if (tag === 'INPUT' || tag === 'SELECT' || tag === 'TEXTAREA') return;
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      if (e.key === 'ArrowLeft' && displayedFY > MIN_FY) { e.preventDefault(); render(--displayedFY); }
+      if (e.key === 'ArrowRight' && displayedFY < MAX_FY) { e.preventDefault(); render(++displayedFY); }
+      if (e.key === 't' || e.key === 'T') {
+        e.preventDefault();
+        displayedFY = currentFY();
+        render(displayedFY);
+      }
+    });
+
+    window.addEventListener('hashchange', () => {
+      const m = location.hash.match(/fy=(\d{4})/);
+      if (m) {
+        const fy = parseInt(m[1]);
+        if (fy >= MIN_FY && fy <= MAX_FY && fy !== displayedFY) {
+          displayedFY = fy;
+          render(fy);
+        }
+      }
+    });
+  }
+
+  init();
+</script>
+</body>
+</html>
