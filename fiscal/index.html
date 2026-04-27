@@ -43,7 +43,7 @@
   }
 
   main {
-    max-width: 1200px;
+    max-width: 720px;
     margin: 0 auto;
     padding: 2rem 1.25rem 4rem;
   }
@@ -184,11 +184,12 @@
 
   .quarters {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 320px));
     gap: 1.25rem;
+    justify-content: center;
   }
-  @media (max-width: 880px) {
-    .quarters { grid-template-columns: 1fr; gap: 1rem; }
+  @media (max-width: 720px) {
+    .quarters { grid-template-columns: minmax(0, 320px); gap: 1rem; }
   }
 
   .quarter {
@@ -257,7 +258,7 @@
     display: flex;
     align-items: baseline;
     gap: .55rem;
-    margin-bottom: .15rem;
+    margin-bottom: .4rem;
   }
   .fm-num {
     font-size: .68rem;
@@ -281,16 +282,10 @@
     text-transform: uppercase;
     color: var(--ink);
   }
-  .m-weeks {
+  .m-range {
     margin-left: auto;
     font-size: .72rem;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
-  }
-  .m-dates {
-    font-size: .73rem;
-    color: var(--muted);
-    margin-bottom: .4rem;
     font-variant-numeric: tabular-nums;
   }
 
@@ -314,7 +309,7 @@
     padding: .3rem 0;
     border-bottom: 1px solid var(--border);
   }
-  .day-grid th.wk { color: var(--accent); }
+  .day-grid th.wk { color: var(--muted-soft); font-weight: 500; }
 
   .day-grid td {
     text-align: center;
@@ -328,19 +323,6 @@
   .day-grid td.spillover { color: var(--muted-soft); }
   .day-grid td.month-end { font-weight: 700; }
   .day-grid td.first-of-month { font-weight: 700; }
-  .day-grid td.first-of-month::after {
-    content: attr(data-month);
-    position: absolute;
-    top: -0.2em;
-    right: 0;
-    font-family: system-ui, sans-serif;
-    font-size: .54rem;
-    color: var(--muted);
-    font-weight: 500;
-    letter-spacing: 0.05em;
-    text-transform: uppercase;
-    transform: translateX(50%);
-  }
 
   .day-grid td.today {
     background: var(--hot);
@@ -348,20 +330,19 @@
     border-radius: 3px;
     font-weight: 700;
   }
-  .day-grid td.today::after { color: rgba(255,255,255,.85); }
 
   .day-grid tr.current-week td:not(.today):not(.wk-num) {
     background: var(--row-current);
   }
 
   .day-grid td.wk-num {
-    color: var(--accent);
-    font-size: .72rem;
-    font-weight: 600;
-    border-left: 1px solid var(--border);
+    color: var(--muted-soft);
+    font-size: .7rem;
+    font-weight: 400;
+    border-left: 1px solid var(--border-soft);
     text-align: right;
     padding-right: .3rem;
-    width: 2.4rem;
+    width: 2.2rem;
   }
 
   /* ===== Footer ===== */
@@ -509,7 +490,6 @@
 
   const MIN_FY = 1998;
   const MAX_FY = 2050;
-  const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
   function render(fy) {
     const months = fiscalMonths(fy);
@@ -598,8 +578,7 @@
           isFirstOfMonth ? 'first-of-month' : '',
           isToday ? 'today' : ''
         ].filter(Boolean).join(' ');
-        const dataAttr = isFirstOfMonth ? ` data-month="${MONTH_ABBR[date.getMonth()]}"` : '';
-        cells += `<td${cls ? ` class="${cls}"` : ''}${dataAttr}>${date.getDate()}</td>`;
+        cells += `<td${cls ? ` class="${cls}"` : ''}>${date.getDate()}</td>`;
       }
       cells += `<td class="wk-num">${ord(m.weekStart + w)}</td>`;
       rowsHtml += `<tr${isCurrentWeek ? ' class="current-week"' : ''}>${cells}</tr>`;
@@ -609,9 +588,8 @@
       <header class="m-header">
         <span class="fm-num">M${m.fm}</span>
         <h3 class="m-name">${m.name}</h3>
-        <span class="m-weeks">${m.weeks} wk · ${ord(m.weekStart)}–${ord(m.weekEnd)}</span>
+        <span class="m-range">${fmtDateShort(m.start)} → ${fmtDateShort(m.end)}</span>
       </header>
-      <div class="m-dates">${fmtDateShort(m.start)} → ${fmtDateShort(m.end)}</div>
       <table class="day-grid">
         <thead><tr>
           <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th><th class="wk">Wk</th>
