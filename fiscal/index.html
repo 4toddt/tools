@@ -379,6 +379,31 @@
     font-size: .85em;
   }
 
+  /* ===== Wide layout: one quarter per row, 3 months side-by-side ===== */
+
+  @media (min-width: 1000px) {
+    main { max-width: 980px; }
+
+    .quarters {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.25rem;
+    }
+
+    .quarter {
+      padding: 1rem 1.5rem;
+    }
+
+    .months {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2rem;
+    }
+
+    /* Negative-margin breakout doesn't make sense once months sit in a grid;
+       keep the tint contained within the cell. */
+    .month.current { margin: 0; }
+  }
+
   /* ===== Print ===== */
 
   @media print {
