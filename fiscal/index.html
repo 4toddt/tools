@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Fiscal Calendar</title>
-<meta name="description" content="La-Z-Boy 5-4-4 fiscal calendar (NRF retail style). Last Saturday of April year-end, with a 53rd week added when the calendar requires it.">
+<meta name="description" content="La-Z-Boy fiscal calendar viewer. See fiscal weeks, months, and quarters for any year, with the current week highlighted.">
 <style>
   /* La-Z-Boy brand palette
      navy   #003349   primary ink / accent
@@ -355,7 +355,7 @@
     color: var(--ink-soft);
     line-height: 1.6;
   }
-  footer p { margin: 0 0 .7rem; max-width: 70ch; }
+  footer p { margin: 0 0 .7rem; }
   footer strong { color: var(--ink); font-weight: 600; }
   footer .keys {
     font-size: .8rem;
@@ -419,7 +419,7 @@
 <body>
 <main>
   <header class="top">
-    <p class="brand">Fiscal Calendar<span class="sep">·</span><span class="tag">5-4-4 retail (NRF) calendar</span></p>
+    <p class="brand">Fiscal Calendar<span class="sep">·</span><span class="tag">La-Z-Boy</span></p>
     <div class="controls">
       <button class="nav" id="prev-btn" title="Previous fiscal year (←)" aria-label="Previous year">←</button>
       <select id="year-select" aria-label="Select fiscal year"></select>
@@ -443,8 +443,8 @@
   <div class="quarters" id="quarters"></div>
 
   <footer>
-    <p><strong>How it works.</strong> Each fiscal year ends on the last Saturday of April. Fiscal weeks run Sunday through Saturday. Each quarter is 13 weeks, split as 5+4+4 (the first month of every quarter gets the extra week). Fiscal months align to weeks, not to calendar months, so they almost always start a few days before or after the 1st.</p>
-    <p><strong>Why some years have 53 weeks.</strong> A normal fiscal year is 52 weeks (364 days), one or two days short of a calendar year, so the year-end Saturday drifts earlier in April each year. Once it would drift before April 24 (the earliest a "last Saturday of April" can fall in a 30-day month), the rule snaps forward to April 29 or 30, adding a 53rd week. The extra week is appended to fiscal month 12 (April), making Q4 a 5-4-5 instead of 5-4-4. Equivalently: 53-week years occur whenever April has 5 Saturdays and the prior year-end was on the 4th Saturday.</p>
+    <p><strong>How it works.</strong> The fiscal year always ends on the last Saturday of April. Fiscal weeks run Sunday through Saturday, and fiscal months are built from full weeks rather than calendar dates — so a fiscal month always starts on a Sunday and ends on a Saturday, usually shifted a few days off from the calendar month it shares a name with. Each quarter is 13 weeks long: the first month has 5 weeks, the next two have 4 each.</p>
+    <p><strong>Why some years have 53 weeks.</strong> Fifty-two fiscal weeks add up to 364 days — one day short of a normal calendar year (two short of a leap year). Those missing days build up over time, and every 5 or 6 years the calendar has to absorb them by inserting a 53rd week, which keeps the year-end anchored to late April. When it happens, the extra week is added onto April, so April has 5 weeks that year instead of 4 and the fiscal year totals 53 weeks instead of 52.</p>
     <p class="keys"><kbd>←</kbd> <kbd>→</kbd> change year &nbsp;·&nbsp; <kbd>T</kbd> jump to today &nbsp;·&nbsp; URL hash <code>#fy=2027</code> bookmarks any year</p>
   </footer>
 </main>
