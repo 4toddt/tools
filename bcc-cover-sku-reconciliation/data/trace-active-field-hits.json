@@ -1,0 +1,709 @@
+{
+  "isPurchaseable": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/account/fragments/wishListOrderItem.jspf",
+      "line": 65,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty sku.isPurchaseable}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/account/fragments/wishListOrderItem.jspf",
+      "line": 69,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"isPurchasable\" value=\"${sku.isPurchaseable}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/ProductDetailsPage/ProductDetailsPage.jsp",
+      "line": 52,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<dsp:getvalueof var=\"isPurchaseable\" value=\"${productRecord['sku.isPurchaseable']}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wishListLocalStore.jsp",
+      "line": 245,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty sku.isPurchaseable}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wishListLocalStore.jsp",
+      "line": 249,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"isPurchasable\" value=\"${sku.isPurchaseable}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wish_list_items.jsp",
+      "line": 201,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty sku.isPurchaseable}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wish_list_items.jsp",
+      "line": 205,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"isPurchasable\" value=\"${sku.isPurchaseable}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/gadgets/productTile.jsp",
+      "line": 51,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<dsp:getvalueof var=\"isPurchaseable\" value=\"${element.attributes['sku.isPurchaseable']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/configurableSkuPdp.jsp",
+      "line": 68,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<%--<dsp:getvalueof var=\"discontinued\" value=\"${productRecord['sku.isPurchaseable']}\" />--%>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/ProductDetail/ProductDetail.jsp",
+      "line": 40,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty productRecord['sku.isPurchaseable']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/ProductDetail/ProductDetail.jsp",
+      "line": 44,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"isPurchasable\" value=\"${productRecord['sku.isPurchaseable']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/RecentlyViewedProducts/RecentlyViewedProducts.jsp",
+      "line": 32,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<dsp:getvalueof var=\"isPurchaseable\" value=\"${element.attributes['sku.isPurchaseable']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/ResultsListRecordsLoop.jsp",
+      "line": 238,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${element.records[0].attributes['sku.isPurchaseable'] ne 'true'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/productCarousel.jsp",
+      "line": 99,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:if test=\"${sku.isPurchaseable == 'true'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/resultsListGrid.jsp",
+      "line": 187,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<dsp:getvalueof var=\"isPurchaseable\" value=\"${element.records[0].attributes['sku.isPurchaseable']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/includes/pdpComponentData.jsp",
+      "line": 15,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"discontinued\" value=\"${productRecord['sku.isPurchaseable']}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/includes/pdpComponentData.jsp",
+      "line": 26,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty productRecord['sku.isPurchaseable']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/includes/pdpComponentData.jsp",
+      "line": 30,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"isPurchasable\" value=\"${productRecord['sku.isPurchaseable']}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/modals/quickviewmodal.jsp",
+      "line": 126,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:when test=\"${empty recordAttributeMap['sku.isPurchaseable']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/modals/quickviewmodal.jsp",
+      "line": 130,
+      "reason": "record_or_repo:isPurchaseable",
+      "text": "<c:set var=\"productIsPurchasable\" value=\"${recordAttributeMap['sku.isPurchaseable']}\" />"
+    }
+  ],
+  "manufacturer_part_number": [],
+  "quantity": [],
+  "addedMaterialTypes": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/FabricSelectorResultsList/FabricSelectorResultsList.jsp",
+      "line": 37,
+      "reason": "record_or_repo:addedMaterialTypes",
+      "text": "<dsp:getvalueof var=\"addedMaterialTypes\" param=\"sku.addedMaterialTypes\"/>"
+    }
+  ],
+  "capCode": [],
+  "cleaningCode": [],
+  "collectionName": [],
+  "colorDescription": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/sitewide/json/addToCart.jsp",
+      "line": 159,
+      "reason": "record_or_repo:colorDescription",
+      "text": "<dsp:valueof param=\"addedItemInfo.coverSku.colorDescription\" valueishtml=\"true\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/json/cartSuccessJson.jsp",
+      "line": 102,
+      "reason": "record_or_repo:colorDescription",
+      "text": "<dsp:valueof param=\"addedItemInfo.coverSku.colorDescription\" valueishtml=\"true\"/>"
+    }
+  ],
+  "colorNumber": [],
+  "coverColor": [],
+  "coverType": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/PDPDataManager.java",
+      "line": 400,
+      "reason": "bare_in_repo_context",
+      "text": "String coverType = (String)coverSku.getPropertyValue(LZBCatalogConstants.COVER_TYPE);"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/WEB-INF/urlconfig.xml",
+      "line": 231,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/WEB-INF/urlconfig.xml",
+      "line": 463,
+      "reason": "record_or_repo:coverType",
+      "text": "# Formatter for DimLocation objects from the sku.coverType dimension."
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/WEB-INF/urlconfig.xml",
+      "line": 473,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/WEB-INF/urlconfig.xml",
+      "line": 500,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/browse/includes/resultsList/resultsListGrid.jsp",
+      "line": 46,
+      "reason": "record_or_repo:coverType",
+      "text": "<c:if test=\"${breadCrumb.key == 'sku.coverType'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 36,
+      "reason": "record_or_repo:coverType",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.coverType'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 85,
+      "reason": "record_or_repo:coverType",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.coverType'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/RefinementMenu/refinementMenuVertical.jspf",
+      "line": 29,
+      "reason": "record_or_repo:coverType",
+      "text": "class=\"${contentItem.dimensionName == 'inStock' ? 'in-stock' : ''} ${contentItem.dimensionName == 'sku.coverType' ? 'material' : ''} section-content facet-list accordion-body ${contentItem.displayColorSwatchOnly ? 'color-swatch' : ''}\""
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/sitewide/json/addToCart.jsp",
+      "line": 156,
+      "reason": "record_or_repo:coverType",
+      "text": "<dsp:valueof param=\"addedItemInfo.coverSku.coverType\" valueishtml=\"true\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/WEB-INF/urlconfig.xml",
+      "line": 231,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/WEB-INF/urlconfig.xml",
+      "line": 463,
+      "reason": "record_or_repo:coverType",
+      "text": "# Formatter for DimLocation objects from the sku.coverType dimension."
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/WEB-INF/urlconfig.xml",
+      "line": 473,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/WEB-INF/urlconfig.xml",
+      "line": 500,
+      "reason": "record_or_repo:coverType",
+      "text": "<value>sku.coverType</value>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 35,
+      "reason": "record_or_repo:coverType",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.coverType'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/CoverSearchResultsList/CoverSearchResultsList.jsp",
+      "line": 84,
+      "reason": "bare_in_repo_context",
+      "text": "<img src=\"${storeConfigHostName}${storeConfig.coverThumbnailBaseUrl}${element.attributes['sku.repositoryId']}.jpg\" class=\"cover-tt-img\" alt=\"${element.attributes['coverType']} ${element.attributes['sku.displayName']} Cover Image\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/RefinementMenu/refinementMenuVertical.jspf",
+      "line": 29,
+      "reason": "record_or_repo:coverType",
+      "text": "<ul class=\"${contentItem.dimensionName == 'sku.coverType' ? 'material' : ''} section-content facet-list ${contentItem.displayColorSwatchOnly ? 'color-swatch' : ''}\" role=\"tabpanel\" id=\"${facetNameFormatted}-body\" aria-labelledby=\"${facet..."
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/resultsListGrid.jsp",
+      "line": 70,
+      "reason": "record_or_repo:coverType",
+      "text": "<c:if test=\"${breadCrumb.key == 'sku.coverType'}\">"
+    }
+  ],
+  "description": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/productSectional.jsp",
+      "line": 46,
+      "reason": "record_or_repo:description",
+      "text": "desc=<dsp:valueof param=\"stylesku.description\" />&nbsp;|"
+    }
+  ],
+  "faceContents": [],
+  "grade": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/atgProductDetail.jsp",
+      "line": 40,
+      "reason": "record_or_repo:grade",
+      "text": "<td><p><dsp:valueof param=\"configOptionCover.sku.grade\" /></p></td>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/atgProductDetail.jsp",
+      "line": 314,
+      "reason": "record_or_repo:grade",
+      "text": "<dsp:valueof param=\"configOptionCover.sku.grade\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/atgProductDetail.jsp",
+      "line": 318,
+      "reason": "record_or_repo:grade",
+      "text": "<dsp:param name=\"grade\" param=\"configOptionCover.sku.grade\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/atgProductDetail.jsp",
+      "line": 324,
+      "reason": "record_or_repo:grade",
+      "text": "<dsp:getvalueof var=\"grade\" param=\"configOptionCover.sku.grade\" />"
+    }
+  ],
+  "patternName": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/PDPDataManager.java",
+      "line": 1021,
+      "reason": "bare_in_repo_context",
+      "text": "coverSubsku.setPattern(patternName);"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 60,
+      "reason": "record_or_repo:patternName",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.patternName'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 115,
+      "reason": "record_or_repo:patternName",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.patternName'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/CoverResultsList/CoverResultsList.jsp",
+      "line": 114,
+      "reason": "record_or_repo:patternName",
+      "text": "<a href=\"${coverUrl}\" title=\"${element.attributes['coverSku.patternName']}\" >"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/CoverSearchRefinementContainer/CoverSearchRefinementContainer.jsp",
+      "line": 65,
+      "reason": "record_or_repo:patternName",
+      "text": "<c:if test=\"${element.dimensionName eq 'coverSku.patternName'}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/CoverSearchResultsList/CoverSearchResultsList.jsp",
+      "line": 89,
+      "reason": "bare_in_repo_context",
+      "text": "<div><span>Pattern:</span> ${element.attributes['patternName']}  (${element.attributes['sku.repositoryId'] })</div>"
+    }
+  ],
+  "performanceFabricFlag": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/sitewide/json/addToCart.jsp",
+      "line": 153,
+      "reason": "record_or_repo:performanceFabricFlag",
+      "text": "<dsp:valueof param=\"addedItemInfo.coverSku.performanceFabricFlag\" valueishtml=\"true\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/json/cartSuccessJson.jsp",
+      "line": 96,
+      "reason": "record_or_repo:performanceFabricFlag",
+      "text": "<dsp:valueof param=\"addedItemInfo.coverSku.performanceFabricFlag\" valueishtml=\"true\"/>"
+    }
+  ],
+  "productCategoryCode": [],
+  "series": [],
+  "wearability": [],
+  "endDate": [],
+  "startDate": [],
+  "status": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/account/fragments/wishListOrderItem.jspf",
+      "line": 56,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty sku.status}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/account/fragments/wishListOrderItem.jspf",
+      "line": 60,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"isActive\" value=\"${sku.status}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/cartridges/ProductDetailsPage/ProductDetailsPage.jsp",
+      "line": 53,
+      "reason": "record_or_repo:status",
+      "text": "<dsp:getvalueof var=\"productSkuStatus\" value=\"${productRecord['sku.status']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wishListLocalStore.jsp",
+      "line": 237,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty sku.status}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wishListLocalStore.jsp",
+      "line": 241,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"isActive\" value=\"${sku.status}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wish_list_items.jsp",
+      "line": 193,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty sku.status}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wish_list_items.jsp",
+      "line": 197,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"isActive\" value=\"${sku.status}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/ProductDetail/ProductDetail.jsp",
+      "line": 48,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty productRecord['sku.status']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/ProductDetail/ProductDetail.jsp",
+      "line": 52,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"isActive\" value=\"${productRecord['sku.status']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/includes/pdpComponentData.jsp",
+      "line": 34,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty productRecord['sku.status']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/includes/pdpComponentData.jsp",
+      "line": 38,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"isActive\" value=\"${productRecord['sku.status']}\" scope=\"request\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/modals/quickviewmodal.jsp",
+      "line": 134,
+      "reason": "record_or_repo:status",
+      "text": "<c:when test=\"${empty recordAttributeMap['sku.status']}\">"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/modals/quickviewmodal.jsp",
+      "line": 138,
+      "reason": "record_or_repo:status",
+      "text": "<c:set var=\"productIsActive\" value=\"${recordAttributeMap['sku.status']}\" />"
+    }
+  ],
+  "ID": [],
+  "cdpDefaultImage": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/droplet/LZBYMLDisplayDroplet.java",
+      "line": 139,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "lAttributeMap.put(\"sku.cdpDefaultImage\",lDefautlImageAttribute);"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/account/fragments/wishListOrderItem.jspf",
+      "line": 82,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/checkout/includes/cartItemImage.jsp",
+      "line": 18,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/emailTemplates/shareProductByEmailTemplate.jsp",
+      "line": 51,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/global/gadgets/cartItemImage.jsp",
+      "line": 17,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/sitewide/json/addToCart.jsp",
+      "line": 91,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/sitewide/json/addToCart.jsp",
+      "line": 212,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<json:property name=\"imageUrl\"><dsp:valueof value=\"${contentHostName}${storeConfig.imagePath}${element.attributes['sku.cdpDefaultImage']}\" valueishtml=\"true\" /></json:property>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wishListLocalStore.jsp",
+      "line": 261,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/account_old/wish_list_items.jsp",
+      "line": 217,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/gadgets/productTile.jsp",
+      "line": 41,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<dsp:getvalueof var=\"prodImage\" value=\"${element.attributes['sku.cdpDefaultImage']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/sectionalPdp.jsp",
+      "line": 298,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<dsp:getvalueof var=\"thumbImg\" param=\"stylesku.cdpDefaultImage\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/productSectional.jsp",
+      "line": 48,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "cdpDefaultImage=<dsp:valueof\tparam=\"stylesku.cdpDefaultImage\" />&nbsp;|"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/ymal.jsp",
+      "line": 57,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<img src=\"${storeConfig.hostName}${storeConfig.imagePath}${element.attributes['sku.cdpDefaultImage']}\" class=\"rollover-img img-base\" onerror=\"this.onerror=null;this.src=''\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/gadgets/customerAlsoLike.jsp",
+      "line": 35,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<img src=\"${storeConfig.hostName}${storeConfig.imagePath}${element.attributes['sku.cdpDefaultImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/json/cartSuccessJson.jsp",
+      "line": 68,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/json/cartSuccessJson.jsp",
+      "line": 155,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<json:property name=\"imageUrl\"><dsp:valueof value=\"${storeConfig.hostName}${storeConfig.imagePath}${element.attributes['sku.cdpDefaultImage']}\" valueishtml=\"true\" /></json:property>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/HorizontalRecordSpotlight/HorizontalRecordSpotlight.jsp",
+      "line": 55,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${record.attributes['sku.cdpDefaultImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/RecentlyViewedProducts/RecentlyViewedProducts.jsp",
+      "line": 30,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<dsp:getvalueof var=\"prodImage\" value=\"${element.attributes['sku.cdpDefaultImage']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/ResultsListRecordsLoop.jsp",
+      "line": 70,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${element.attributes['sku.cdpDefaultImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/resultsListGrid.jsp",
+      "line": 109,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${element.attributes['sku.cdpDefaultImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/emailTemplates/shareProductByEmailTemplate.jsp",
+      "line": 51,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/global/gadgets/cartItemImage.jsp",
+      "line": 17,
+      "reason": "record_or_repo:cdpDefaultImage",
+      "text": "<c:set var=\"cdpImage\" value=\"${sku.cdpDefaultImage}\"/>"
+    }
+  ],
+  "cdpMouseOverImage": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/droplet/LZBYMLDisplayDroplet.java",
+      "line": 144,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "lAttributeMap.put(\"sku.cdpMouseOverImage\",lMouseOverImageAttribute);"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/gadgets/productTile.jsp",
+      "line": 42,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<dsp:getvalueof var=\"mouseOverImage\" value=\"${element.attributes['sku.cdpMouseOverImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/pdpInfo.jsp",
+      "line": 60,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<dsp:getvalueof var=\"lifestyleUrl\" value=\"${productRecord['sku.cdpMouseOverImage']}\" />"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/productSectional.jsp",
+      "line": 49,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "cdpMouseOverImage=<dsp:valueof param=\"stylesku.cdpMouseOverImage\" />&nbsp;|"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/gadgets/customerAlsoLike.jsp",
+      "line": 36,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<%-- <img src=\"${storeConfig.hostName}${storeConfig.baseThumbailImagePath}${element.attributes['sku.cdpMouseOverImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/HorizontalRecordSpotlight/HorizontalRecordSpotlight.jsp",
+      "line": 56,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<c:set var=\"cdpMouseOverImage\" value=\"${record.attributes['sku.cdpMouseOverImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/ResultsListRecordsLoop.jsp",
+      "line": 71,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<c:set var=\"cdpMouseOverImage\" value=\"${element.attributes['sku.cdpMouseOverImage']}\"/>"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/resultsListGrid.jsp",
+      "line": 110,
+      "reason": "record_or_repo:cdpMouseOverImage",
+      "text": "<c:set var=\"cdpMouseOverImage\" value=\"${element.attributes['sku.cdpMouseOverImage']}\"/>"
+    }
+  ],
+  "dimensionImage": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/pdpInfo.jsp",
+      "line": 137,
+      "reason": "record_or_repo:dimensionImage",
+      "text": "<dsp:getvalueof var=\"dimensionImageUrl\" value=\"${productRecord['sku.dimensionImage']}\" />"
+    }
+  ],
+  "hideForCA": [],
+  "hideForTextSearch": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/search/unbxd/UNBXDConfigSKUPropGenerator.java",
+      "line": 828,
+      "reason": "record_or_repo:hideForTextSearch",
+      "text": "//\t\tlPropertyMap.put(\"sku.hideForTextSearch\",false);"
+    }
+  ],
+  "showOnline": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/PDPDataManager.java",
+      "line": 370,
+      "reason": "bare_in_repo_context",
+      "text": "String showOnline = (String)coverSku.getPropertyValue(LZBCatalogConstants.SHOW_ONLINE);"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/PDPDataManager.java",
+      "line": 372,
+      "reason": "bare_in_repo_context",
+      "text": "vlogDebug(\"Cover showOnline is FALSE: \" + coverSku.getRepositoryId());"
+    },
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/search/unbxd/UNBXDSearchManager.java",
+      "line": 271,
+      "reason": "bare_in_repo_context",
+      "text": "String showOnline = (String) sku.getPropertyValue(\"showOnline\");"
+    }
+  ],
+  "unsearchable": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Commerce/src/com/lzb/search/unbxd/UNBXDPropGenerator.java",
+      "line": 76,
+      "reason": "bare_in_repo_context",
+      "text": "String unsearchable = (String) sku.getPropertyValue(\"unsearchable\");"
+    }
+  ],
+  "acaBadge": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/pdpInfo.jsp",
+      "line": 49,
+      "reason": "record_or_repo:acaBadge",
+      "text": "<c:if test =\"${not empty productRecord['sku.acaBadge'] && productRecord['sku.acaBadge'] eq 'true'}\">"
+    }
+  ],
+  "archCoverAvlb": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/rwd.war/contactus/free-swatches.jsp",
+      "line": 55,
+      "reason": "bare_in_repo_context",
+      "text": "<dsp:param name=\"queryRQL\" value=\"archCoverAvlb = true AND NOT archwayId IS NULL ORDER BY id\" />"
+    }
+  ],
+  "archwayID": [],
+  "madeInUSABadge": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/pdpInfo.jsp",
+      "line": 52,
+      "reason": "record_or_repo:madeInUSABadge",
+      "text": "<c:if test =\"${not empty productRecord['sku.madeInUSABadge'] && productRecord['sku.madeInUSABadge'] eq 'true'}\">"
+    }
+  ],
+  "sortOrder": [],
+  "listPrice": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/gadgets/cartItems.jsp",
+      "line": 87,
+      "reason": "record_or_repo:listPrice",
+      "text": "<dsp:getvalueof var=\"listPrice\" param=\"sku.listPrice\" />"
+    }
+  ],
+  "onSale": [],
+  "salePrice": [
+    {
+      "file": "atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cart/gadgets/cartItems.jsp",
+      "line": 88,
+      "reason": "record_or_repo:salePrice",
+      "text": "<dsp:getvalueof var=\"salePrice\" param=\"sku.salePrice\" />"
+    }
+  ],
+  "wholesalePrice": []
+}
