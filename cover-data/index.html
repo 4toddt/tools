@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cover Data Extractor</title>
+<meta name="description" content="Convert the La-Z-Boy Cover Information List XLSX into a clean JSON artifact.">
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #ffffff;
+    --border: #E6E2D5;
+    --border-soft: #EEEAE0;
+    --ink: #1a1a1a;
+    --ink-soft: #404040;
+    --muted: #757575;
+    --muted-soft: #B0B0B0;
+    --accent: #003349;
+    --accent-hover: #002435;
+    --hot: #BD472A;
+    --hot-soft: #F7E3DE;
+    --ok: #2e7d4f;
+    --ok-soft: #E4F1E9;
+    --warn: #B07A00;
+    --warn-soft: #FAF1D8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 15px/1.5 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.25rem 4rem;
+  }
+  header.top {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+  .brand {
+    margin: 0;
+    font-size: .95rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .brand .sep { color: var(--muted-soft); margin: 0 .5em; font-weight: 400; }
+  .brand .tag { color: var(--muted); font-weight: 400; }
+  .home-link {
+    font-size: .85rem;
+    color: var(--muted);
+    text-decoration: none;
+  }
+  .home-link:hover { color: var(--accent); text-decoration: underline; }
+
+  h1 {
+    font-size: 1.75rem;
+    margin: 0 0 .25rem;
+    letter-spacing: -0.015em;
+    color: var(--accent);
+  }
+  p.lede {
+    color: var(--ink-soft);
+    margin: 0 0 1.75rem;
+  }
+
+  /* Upload card */
+  .upload {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .upload p { margin: 0 0 1rem; color: var(--ink-soft); font-size: .95rem; }
+  .file-input { display: none; }
+  .upload-btn {
+    display: inline-block;
+    font: inherit;
+    font-weight: 500;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: .65rem 1.25rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 120ms ease;
+  }
+  .upload-btn:hover { background: var(--accent-hover); }
+  .upload-btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .upload .filename {
+    margin-top: .75rem;
+    font-size: .85rem;
+    color: var(--muted);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  }
+
+  /* Status panels */
+  .status {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+  .status.hidden { display: none; }
+  .status.error { border-color: var(--hot); background: var(--hot-soft); }
+  .status h2 {
+    margin: 0 0 .75rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+  }
+  .counts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: .75rem;
+    margin-bottom: 1rem;
+  }
+  .count {
+    background: var(--border-soft);
+    border-radius: 4px;
+    padding: .55rem .7rem;
+  }
+  .count .num {
+    display: block;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+  }
+  .count .label {
+    font-size: .72rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .unknown-list {
+    background: var(--warn-soft);
+    border-left: 3px solid var(--warn);
+    border-radius: 0 4px 4px 0;
+    padding: .75rem 1rem;
+    margin-bottom: 1rem;
+    font-size: .85rem;
+    color: var(--ink-soft);
+  }
+  .unknown-list strong { color: var(--warn); }
+  .unknown-list ul {
+    margin: .35rem 0 0;
+    padding-left: 1.25rem;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .82rem;
+  }
+  .unknown-list li { margin: .1rem 0; }
+
+  .downloads {
+    display: flex;
+    gap: .75rem;
+    flex-wrap: wrap;
+  }
+  .dl-btn {
+    flex: 1 1 auto;
+    min-width: 180px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font: inherit;
+    font-size: .9rem;
+    font-weight: 500;
+    background: var(--surface);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    padding: .6rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background 120ms ease, color 120ms ease;
+  }
+  .dl-btn:hover { background: var(--accent); color: #fff; }
+  .dl-btn .size { color: var(--muted); font-weight: 400; font-size: .82rem; }
+  .dl-btn:hover .size { color: rgba(255,255,255,.75); }
+
+  .error-msg {
+    margin: 0;
+    font-size: .9rem;
+    color: var(--hot);
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    white-space: pre-wrap;
+  }
+
+  details.legend-preview {
+    margin-top: 1rem;
+    font-size: .82rem;
+    color: var(--ink-soft);
+  }
+  details.legend-preview summary {
+    cursor: pointer;
+    color: var(--muted);
+    margin-bottom: .4rem;
+  }
+  details.legend-preview pre {
+    background: var(--border-soft);
+    padding: .6rem .8rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-size: .78rem;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  footer {
+    margin-top: 2.75rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--border);
+    font-size: .85rem;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+  footer p { margin: 0 0 .7rem; }
+  footer strong { color: var(--ink); font-weight: 600; }
+  footer code {
+    background: var(--border-soft);
+    padding: .05em .35em;
+    border-radius: 3px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: .85em;
+  }
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <p class="brand">Cover Data Extractor<span class="sep">·</span><span class="tag">La-Z-Boy</span></p>
+    <a class="home-link" href="../">← all tools</a>
+  </header>
+
+  <h1>Cover Data Extractor</h1>
+  <p class="lede">Drop the latest Cover Information List spreadsheet to get a clean JSON artifact for the rest of the toolchain.</p>
+
+  <div class="upload">
+    <p>Select an <code>.xlsx</code> from Merchandising (e.g. <em>April 2026 Cover Information List FINAL</em>).</p>
+    <input type="file" id="file-input" class="file-input" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+    <button type="button" class="upload-btn" id="upload-btn">Choose file…</button>
+    <div class="filename" id="filename"></div>
+  </div>
+
+  <div class="status hidden" id="status-panel">
+    <h2 id="status-title">Extracted</h2>
+    <div class="counts" id="counts"></div>
+    <div id="unknown-block"></div>
+    <div class="downloads">
+      <button type="button" class="dl-btn" id="dl-data">
+        <span>Download cover-families.json</span>
+        <span class="size" id="size-data"></span>
+      </button>
+      <button type="button" class="dl-btn" id="dl-report">
+        <span>Download extraction-report.json</span>
+        <span class="size" id="size-report"></span>
+      </button>
+    </div>
+    <details class="legend-preview" id="preview">
+      <summary>Preview first record</summary>
+      <pre id="preview-content"></pre>
+    </details>
+  </div>
+
+  <div class="status error hidden" id="error-panel">
+    <h2>Could not extract</h2>
+    <p class="error-msg" id="error-text"></p>
+  </div>
+
+  <footer>
+    <p><strong>What it does.</strong> Reads the <code>MASTER FABRICS</code> and <code>MASTER LEATHER</code> sheets, drops marketing-only columns (Married Styles, Notes, Welt, etc.), merges duplicate leather rows by Series Number, splits the rare combo series numbers (Grandview), and detects per-family drop status (peach/teal/purple/salmon row fills) plus per-color drops (red strikethrough lines in the Colors cell).</p>
+    <p><strong>What you get.</strong> <code>cover-families.json</code> with a top-level <code>legends</code> map for cryptic codes (wearability, specialty, product line, cleaning), plus <code>extraction-report.json</code> with counts, merges, and any unknown codes worth flagging back to Merchandising.</p>
+  </footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js" integrity="sha384-vtjasyidUo0kW94K5MXDXntzOJpQgBKXmE7e2Ga4LG0skTTLeBi97eFAXsqewJjw" crossorigin="anonymous"></script>
+
+<script>
+'use strict';
+
+// ---------------------------------------------------------------------------
+// Legends — hard-coded from the workbook's own legend cells (and Erin's
+// guidance). Unknown codes are emitted raw + logged to extraction-report.json.
+// ---------------------------------------------------------------------------
+
+const LEGENDS = {
+  wearability: {
+    fabric: { N: 'Normal', M: 'Medium', P: 'Performance' },
+    leather: { A: 'Authentic', P: 'Performance', N: 'Nubuck' }
+  },
+  specialty: {
+    fabric: {
+      I: 'iClean', C: 'Conserve', A: 'Antimicrobial',
+      PF: 'Pet Friendly', N: 'Nanobionic', 'W*B': 'Bleach Cleanable'
+    },
+    leather: { I: 'iClean', C: 'Crypton', A: 'Antimicrobial' }
+  },
+  productLine: {
+    fabric: { MU: 'Multi-Use', CH: 'Cohesion', DC: 'Design Center' },
+    leather: {
+      SL: 'Specialty Leather',
+      SLR: 'Select Leather Reclining',
+      SLS: 'Select Leather Stationary',
+      CLM: 'Custom Leather Match',
+      CLP: 'Custom Leather Plus'
+    }
+  },
+  cleaningCode: {
+    S: 'Solvent', W: 'Water', WS: 'Water or Solvent',
+    'W*B': 'Water with Bleach', L: 'Leather'
+  },
+  capCode: {
+    DR: 'Dual Reclining', UR: 'Universal Reclining', PS: 'Power Stationary',
+    BU: 'Bench Upholstery', VS: 'Vinyl Sides', NP: 'No Pillows',
+    RL: 'Reclining Limited', UE: 'Upholstery Edition', DP: 'Dual Power'
+  }
+};
+
+// Fill colors for whole-family drop status. SheetJS resolves theme colors to
+// their effective rgb, so we match on the resolved 6-hex value (case-insensitive,
+// alpha stripped). The four buckets correspond to the legend on each master
+// sheet; we rename "April 2026 Drops" → "Market Drop" since this happens twice
+// a year (April + October markets) and the date-bound name doesn't generalize.
+const FILL_TO_STATUS = {
+  'FFCD80': 'Immediate Drop',
+  'BEEBDF': 'Phase Out',         // theme 7, tint 0.6
+  'D4ACE6': 'New Phase Out',
+  'F9B3A7': 'Market Drop'        // theme 9, tint 0.6 ("April 2026 Drops")
+};
+
+// XML namespace used inside the SheetJS rich-text fragment.
+const SST_NS = 'http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+function isoDate(v) {
+  if (!v) return null;
+  if (v instanceof Date) {
+    const y = v.getFullYear();
+    const m = String(v.getMonth() + 1).padStart(2, '0');
+    const d = String(v.getDate()).padStart(2, '0');
+    return `${y}-${m}-${d}`;
+  }
+  // Excel serial fallback
+  if (typeof v === 'number') {
+    const ms = (v - 25569) * 86400 * 1000;
+    return isoDate(new Date(ms));
+  }
+  return null;
+}
+
+function normalizeRgb(rgb) {
+  if (!rgb) return null;
+  const hex = String(rgb).toUpperCase().replace(/^#/, '');
+  // Strip alpha prefix if 8 chars: AARRGGBB → RRGGBB
+  return hex.length === 8 ? hex.slice(2) : hex;
+}
+
+function familyStatusFromCell(cell) {
+  const fg = cell?.s?.fgColor;
+  if (!fg) return null;
+  const rgb = normalizeRgb(fg.rgb);
+  if (!rgb || rgb === '000000') return null;
+  return FILL_TO_STATUS[rgb] || null;
+}
+
+// Parse a SheetJS rich-text `r` field (raw XML string) into runs.
+// Each run is {text, dropped} where dropped = strike + red font.
+function parseRichRuns(xmlString) {
+  if (!xmlString) return null;
+  // Wrap so DOMParser is happy; pre-namespace it.
+  const wrapped = `<root xmlns="${SST_NS}">${xmlString}</root>`;
+  const doc = new DOMParser().parseFromString(wrapped, 'text/xml');
+  const err = doc.querySelector('parsererror');
+  if (err) return null;
+  const runs = doc.getElementsByTagNameNS(SST_NS, 'r');
+  if (!runs.length) return null;
+  const out = [];
+  for (const r of runs) {
+    const rPr = r.getElementsByTagNameNS(SST_NS, 'rPr')[0];
+    const tEl = r.getElementsByTagNameNS(SST_NS, 't')[0];
+    const text = tEl ? tEl.textContent : '';
+    let dropped = false;
+    if (rPr) {
+      const strike = rPr.getElementsByTagNameNS(SST_NS, 'strike').length > 0;
+      let red = false;
+      for (const c of rPr.getElementsByTagNameNS(SST_NS, 'color')) {
+        const rgb = normalizeRgb(c.getAttribute('rgb'));
+        if (rgb === 'FF0000') { red = true; break; }
+      }
+      dropped = strike && red;
+    }
+    out.push({ text, dropped });
+  }
+  return out;
+}
+
+// Parse a Colors cell into [{colorCode, colorName, dropStatus}].
+// A "color line" is separated by \r\n. A line is dropped if ANY character in
+// it was formatted with strike + red font.
+function parseColors(cell) {
+  const runs = parseRichRuns(cell?.r);
+  // Build a sequence of {text, dropped} character buffers split on newlines.
+  let segments;
+  if (runs) {
+    segments = [];
+    let buf = '';
+    let bufDropped = false;
+    const flush = () => {
+      segments.push({ text: buf, dropped: bufDropped });
+      buf = '';
+      bufDropped = false;
+    };
+    for (const run of runs) {
+      // Walk characters and split on \r\n (or lone \n).
+      const parts = run.text.split(/\r?\n/);
+      for (let i = 0; i < parts.length; i++) {
+        if (i > 0) flush();
+        buf += parts[i];
+        if (run.dropped && parts[i].length > 0) bufDropped = true;
+      }
+    }
+    flush();
+  } else {
+    // Plain text fallback
+    const raw = String(cell?.v ?? '');
+    segments = raw.split(/\r?\n/).map(t => ({ text: t, dropped: false }));
+  }
+  const colors = [];
+  for (const seg of segments) {
+    const line = seg.text.trim();
+    if (!line) continue;
+    // "76 = Cappuccino" → code "76", name "Cappuccino"
+    const m = line.match(/^(\S+)\s*=\s*(.+?)\s*$/);
+    if (!m) {
+      // Unparseable line — preserve raw so we can log
+      colors.push({ raw: line, dropStatus: seg.dropped ? 'dropped' : 'active' });
+      continue;
+    }
+    colors.push({
+      colorCode: m[1],
+      colorName: m[2],
+      dropStatus: seg.dropped ? 'dropped' : 'active'
+    });
+  }
+  return colors;
+}
+
+// Read a cell value as string, trimmed; return null if empty.
+function strVal(cell) {
+  if (!cell) return null;
+  const v = cell.v;
+  if (v === null || v === undefined) return null;
+  const s = String(v).trim();
+  return s.length ? s : null;
+}
+
+// Build a map of header text (normalized) → column index for a given row.
+function headerMap(sheet, headerRow) {
+  const range = XLSX.utils.decode_range(sheet['!ref']);
+  const map = {};
+  for (let c = range.s.c; c <= range.e.c; c++) {
+    const cell = sheet[XLSX.utils.encode_cell({ r: headerRow - 1, c })];
+    const v = cell?.v;
+    if (v !== null && v !== undefined) {
+      // Normalize: lowercase, strip whitespace/newlines, drop punctuation
+      const key = String(v)
+        .toLowerCase()
+        .replace(/[\s\r\n]+/g, ' ')
+        .replace(/[^a-z0-9 ]/g, '')
+        .trim();
+      if (key && !(key in map)) map[key] = c;
+    }
+  }
+  return map;
+}
+
+function getCell(sheet, row, col) {
+  if (col === undefined || col === null) return undefined;
+  return sheet[XLSX.utils.encode_cell({ r: row - 1, c: col })];
+}
+
+// Track unknown codes (anything in data but absent from LEGENDS).
+class UnknownLog {
+  constructor() { this.entries = []; }
+  check(category, subcategory, value, sheet, row, patternName) {
+    if (!value) return;
+    const legendForCategory = LEGENDS[category];
+    const legend = subcategory ? legendForCategory?.[subcategory] : legendForCategory;
+    if (!legend) return;
+    if (!(value in legend)) {
+      this.entries.push({
+        field: category + (subcategory ? `.${subcategory}` : ''),
+        value, sheet, row, patternName
+      });
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Row extractors
+// ---------------------------------------------------------------------------
+
+function extractFabricRow(sheet, headers, row, unknownLog) {
+  const series = strVal(getCell(sheet, row, headers['series number']));
+  const pattern = strVal(getCell(sheet, row, headers['pattern name']));
+  if (!series || !pattern) return null;
+
+  const colorsCell = getCell(sheet, row, headers['colors']);
+  const introDate = isoDate(getCell(sheet, row, headers['intro date'])?.v);
+  const productLine = strVal(getCell(sheet, row, headers['product line']));
+  const capCode = strVal(getCell(sheet, row, headers['cap code']));
+  const wearability = strVal(getCell(sheet, row, headers['wearability']));
+  const specialtyRaw = strVal(getCell(sheet, row, headers['specialty fabric']));
+  const cleaningCode = strVal(getCell(sheet, row, headers['cleaning code']));
+  const faceContents = strVal(getCell(sheet, row, headers['face contents']));
+  const description = strVal(getCell(sheet, row, headers['descriptions']));
+  const familyStatus = familyStatusFromCell(getCell(sheet, row, headers['series number']));
+
+  const specialty = specialtyRaw
+    ? specialtyRaw.split(/\s*,\s*/).filter(Boolean)
+    : null;
+
+  // Log unknown codes
+  unknownLog.check('productLine', 'fabric', productLine, 'MASTER FABRICS', row, pattern);
+  unknownLog.check('capCode', null, capCode, 'MASTER FABRICS', row, pattern);
+  unknownLog.check('wearability', 'fabric', wearability, 'MASTER FABRICS', row, pattern);
+  if (specialty) {
+    for (const s of specialty) {
+      unknownLog.check('specialty', 'fabric', s, 'MASTER FABRICS', row, pattern);
+    }
+  }
+  unknownLog.check('cleaningCode', null, cleaningCode, 'MASTER FABRICS', row, pattern);
+
+  // Colors with per-color intro date inherited from the row
+  const colors = parseColors(colorsCell).map(c => ({
+    ...c,
+    introDate: introDate || undefined
+  }));
+
+  const record = {
+    seriesNumber: series,
+    patternName: pattern,
+    coverType: 'fabric',
+    productLine: productLine || undefined,
+    wearability: wearability || undefined,
+    specialty: specialty || undefined,
+    cleaningCode: cleaningCode || undefined,
+    capCode: capCode || undefined,
+    faceContents: faceContents || undefined,
+    description: description || undefined,
+    familyStatus: familyStatus || undefined,
+    colors
+  };
+  return pruneUndefined(record);
+}
+
+function extractLeatherRow(sheet, headers, row, unknownLog) {
+  const series = strVal(getCell(sheet, row, headers['series number']));
+  const pattern = strVal(getCell(sheet, row, headers['pattern name']));
+  if (!series || !pattern) return null;
+
+  const colorsCell = getCell(sheet, row, headers['colors']);
+  const introDate = isoDate(getCell(sheet, row, headers['intro date'])?.v);
+  const productLineRaw = strVal(getCell(sheet, row, headers['product line']));
+  const dot = strVal(getCell(sheet, row, headers['leather description dot']));
+  const specialtyRaw = strVal(getCell(sheet, row, headers['specialty leather']));
+  const cleaningCode = strVal(getCell(sheet, row, headers['cleaning code']));
+  const description = strVal(getCell(sheet, row, headers['descriptions']));
+  const familyStatus = familyStatusFromCell(getCell(sheet, row, headers['series number']));
+
+  // Wearability for leather is the single-letter "dot" column.
+  const wearability = dot && dot.length === 1 ? dot : null;
+  const specialty = specialtyRaw
+    ? specialtyRaw.split(/\s*,\s*/).filter(Boolean)
+    : null;
+  // Product line may be multi-line ("CLP\nSLR" or "SLR\nSLS")
+  const productLines = productLineRaw
+    ? productLineRaw.split(/[\r\n,]+/).map(s => s.trim()).filter(Boolean)
+    : [];
+
+  for (const pl of productLines) {
+    unknownLog.check('productLine', 'leather', pl, 'MASTER LEATHER', row, pattern);
+  }
+  unknownLog.check('wearability', 'leather', wearability, 'MASTER LEATHER', row, pattern);
+  if (specialty) {
+    for (const s of specialty) {
+      unknownLog.check('specialty', 'leather', s, 'MASTER LEATHER', row, pattern);
+    }
+  }
+  unknownLog.check('cleaningCode', null, cleaningCode, 'MASTER LEATHER', row, pattern);
+
+  const colors = parseColors(colorsCell).map(c => ({
+    ...c,
+    introDate: introDate || undefined
+  }));
+
+  return pruneUndefined({
+    seriesNumber: series,
+    patternName: pattern,
+    coverType: 'leather',
+    productLines, // kept as array internally; serialized as string or array depending on count
+    wearability: wearability || undefined,
+    specialty: specialty || undefined,
+    cleaningCode: cleaningCode || undefined,
+    description: description || undefined,
+    familyStatus: familyStatus || undefined,
+    colors,
+    _sourceRow: row
+  });
+}
+
+function pruneUndefined(obj) {
+  const out = {};
+  for (const k of Object.keys(obj)) {
+    const v = obj[k];
+    if (v === undefined || v === null) continue;
+    if (Array.isArray(v) && v.length === 0) continue;
+    out[k] = v;
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Merging duplicate leather rows by Series Number.
+// Each row contributes its colors (with their own introDate). Fields like
+// description, wearability, etc. are taken from the first row encountered;
+// productLines from later rows are unioned in.
+// ---------------------------------------------------------------------------
+
+function mergeLeatherFamilies(rows) {
+  const bySeries = new Map();
+  const merges = [];
+  for (const row of rows) {
+    if (!row) continue;
+    const sn = row.seriesNumber;
+    if (!bySeries.has(sn)) {
+      bySeries.set(sn, { ...row, _sourceRows: [row._sourceRow] });
+      delete bySeries.get(sn)._sourceRow;
+      continue;
+    }
+    const existing = bySeries.get(sn);
+    existing._sourceRows.push(row._sourceRow);
+    // Union colors (dedupe by colorCode, prefer non-dropped status if mixed)
+    const codes = new Set(existing.colors.map(c => c.colorCode || c.raw));
+    for (const c of row.colors) {
+      const key = c.colorCode || c.raw;
+      if (!codes.has(key)) {
+        existing.colors.push(c);
+        codes.add(key);
+      }
+    }
+    // Union product lines
+    const plSet = new Set(existing.productLines || []);
+    for (const pl of row.productLines || []) plSet.add(pl);
+    existing.productLines = [...plSet];
+    // If either row has a familyStatus, keep the non-active one.
+    if (!existing.familyStatus && row.familyStatus) existing.familyStatus = row.familyStatus;
+  }
+  for (const fam of bySeries.values()) {
+    if (fam._sourceRows.length > 1) {
+      merges.push({
+        seriesNumber: fam.seriesNumber,
+        patternName: fam.patternName,
+        mergedRows: fam._sourceRows.slice()
+      });
+    }
+    delete fam._sourceRows;
+  }
+  return { families: [...bySeries.values()], merges };
+}
+
+// ---------------------------------------------------------------------------
+// Split combo series numbers (e.g. "FL2026/LB2026"). Each split record gets
+// its own corresponding productLine (paired by order) and the others go into
+// `siblingSeriesNumbers`.
+// ---------------------------------------------------------------------------
+
+function splitComboSeries(records) {
+  const out = [];
+  for (const rec of records) {
+    const sns = rec.seriesNumber.split('/').map(s => s.trim()).filter(Boolean);
+    const pls = rec.productLines || [];
+    if (sns.length === 1) {
+      // Normal case — collapse productLines array.
+      const finalized = { ...rec };
+      delete finalized.productLines;
+      if (pls.length === 1) finalized.productLine = pls[0];
+      else if (pls.length > 1) finalized.productLine = pls;
+      out.push(finalized);
+      continue;
+    }
+    // Multi-series: emit one record per series. Pair productLine by index if
+    // counts match; otherwise share the full list.
+    for (let i = 0; i < sns.length; i++) {
+      const finalized = { ...rec };
+      delete finalized.productLines;
+      finalized.seriesNumber = sns[i];
+      if (pls.length === sns.length) finalized.productLine = pls[i];
+      else if (pls.length === 1) finalized.productLine = pls[0];
+      else if (pls.length > 1) finalized.productLine = pls;
+      finalized.siblingSeriesNumbers = sns.filter((_, j) => j !== i);
+      out.push(finalized);
+    }
+  }
+  return out;
+}
+
+// Field-ordering helper so the JSON reads naturally.
+const FIELD_ORDER = [
+  'seriesNumber', 'patternName', 'coverType', 'productLine', 'siblingSeriesNumbers',
+  'wearability', 'specialty', 'cleaningCode', 'capCode', 'faceContents',
+  'description', 'familyStatus', 'colors'
+];
+
+function orderRecord(rec) {
+  const out = {};
+  for (const f of FIELD_ORDER) {
+    if (f in rec) out[f] = rec[f];
+  }
+  for (const k of Object.keys(rec)) {
+    if (!(k in out)) out[k] = rec[k];
+  }
+  return out;
+}
+
+// ---------------------------------------------------------------------------
+// Main pipeline: workbook → {coverFamilies JSON, report JSON}
+// ---------------------------------------------------------------------------
+
+function findHeaderRow(sheet, marker) {
+  const range = XLSX.utils.decode_range(sheet['!ref']);
+  for (let r = range.s.r; r <= range.e.r; r++) {
+    const cell = sheet[XLSX.utils.encode_cell({ r, c: 0 })];
+    if (cell?.v && String(cell.v).toLowerCase().trim() === marker) {
+      return r + 1; // 1-indexed
+    }
+  }
+  return null;
+}
+
+function extractAll(workbook, sourceFileName) {
+  const unknownLog = new UnknownLog();
+
+  // FABRICS
+  const fabSheet = workbook.Sheets['MASTER FABRICS'];
+  if (!fabSheet) throw new Error('Workbook is missing the "MASTER FABRICS" sheet.');
+  const fabHeaderRow = findHeaderRow(fabSheet, 'series number');
+  if (!fabHeaderRow) throw new Error('Could not locate the "Series Number" header in MASTER FABRICS.');
+  const fabHeaders = headerMap(fabSheet, fabHeaderRow);
+  const fabRange = XLSX.utils.decode_range(fabSheet['!ref']);
+  const fabricRecords = [];
+  for (let r = fabHeaderRow + 1; r <= fabRange.e.r + 1; r++) {
+    const rec = extractFabricRow(fabSheet, fabHeaders, r, unknownLog);
+    if (rec) {
+      // Strip the unused internal productLines field for fabric (single-valued)
+      if (Array.isArray(rec.productLine)) {
+        // shouldn't happen for fabric but guard anyway
+      }
+      fabricRecords.push(rec);
+    }
+  }
+
+  // LEATHER
+  const leaSheet = workbook.Sheets['MASTER LEATHER'];
+  if (!leaSheet) throw new Error('Workbook is missing the "MASTER LEATHER" sheet.');
+  const leaHeaderRow = findHeaderRow(leaSheet, 'series number');
+  if (!leaHeaderRow) throw new Error('Could not locate the "Series Number" header in MASTER LEATHER.');
+  const leaHeaders = headerMap(leaSheet, leaHeaderRow);
+  const leaRange = XLSX.utils.decode_range(leaSheet['!ref']);
+  const leatherRowRecords = [];
+  for (let r = leaHeaderRow + 1; r <= leaRange.e.r + 1; r++) {
+    const rec = extractLeatherRow(leaSheet, leaHeaders, r, unknownLog);
+    if (rec) leatherRowRecords.push(rec);
+  }
+  const { families: mergedLeather, merges } = mergeLeatherFamilies(leatherRowRecords);
+
+  // Split combo series for both kinds (combos currently only exist on leather).
+  const allRecords = splitComboSeries([...fabricRecords, ...mergedLeather])
+    .map(orderRecord);
+
+  // Counts
+  let droppedColors = 0;
+  let comboSplit = 0;
+  for (const rec of allRecords) {
+    if (rec.siblingSeriesNumbers) comboSplit++;
+    for (const c of rec.colors || []) {
+      if (c.dropStatus === 'dropped') droppedColors++;
+    }
+  }
+  const fabricCount = allRecords.filter(r => r.coverType === 'fabric').length;
+  const leatherCount = allRecords.filter(r => r.coverType === 'leather').length;
+
+  const now = new Date().toISOString();
+
+  const coverFamiliesJson = {
+    schemaVersion: '1.0.0',
+    generatedAt: now,
+    legends: LEGENDS,
+    coverFamilies: allRecords
+  };
+
+  const reportJson = {
+    schemaVersion: '1.0.0',
+    generatedAt: now,
+    sourceFile: sourceFileName,
+    counts: {
+      fabricFamilies: fabricCount,
+      leatherFamilies: leatherCount,
+      droppedColors,
+      mergedLeatherRows: merges.length,
+      comboSplit,
+      unknownCodes: unknownLog.entries.length
+    },
+    merges,
+    unknownCodes: unknownLog.entries
+  };
+
+  return { coverFamiliesJson, reportJson };
+}
+
+// ---------------------------------------------------------------------------
+// UI plumbing
+// ---------------------------------------------------------------------------
+
+const $ = id => document.getElementById(id);
+
+function showError(msg) {
+  $('error-panel').classList.remove('hidden');
+  $('error-text').textContent = msg;
+  $('status-panel').classList.add('hidden');
+}
+
+function clearError() {
+  $('error-panel').classList.add('hidden');
+}
+
+function renderResults(data, report, sourceFileName) {
+  $('status-panel').classList.remove('hidden');
+  $('counts').innerHTML = '';
+  const counts = report.counts;
+  const items = [
+    ['Fabric families', counts.fabricFamilies],
+    ['Leather families', counts.leatherFamilies],
+    ['Dropped colors', counts.droppedColors],
+    ['Merged rows', counts.mergedLeatherRows],
+    ['Combo splits', counts.comboSplit],
+    ['Unknown codes', counts.unknownCodes]
+  ];
+  for (const [label, n] of items) {
+    const el = document.createElement('div');
+    el.className = 'count';
+    el.innerHTML = `<span class="num">${n}</span><span class="label">${label}</span>`;
+    $('counts').appendChild(el);
+  }
+
+  const unknownBlock = $('unknown-block');
+  unknownBlock.innerHTML = '';
+  if (report.unknownCodes.length) {
+    const list = report.unknownCodes.slice(0, 8).map(
+      e => `<li>${e.field}: <strong>${e.value}</strong> &nbsp;<span style="color:var(--muted)">${e.sheet} row ${e.row}${e.patternName ? ` · ${e.patternName}` : ''}</span></li>`
+    ).join('');
+    const more = report.unknownCodes.length > 8
+      ? `<li><em>… plus ${report.unknownCodes.length - 8} more in the report</em></li>`
+      : '';
+    unknownBlock.innerHTML = `
+      <div class="unknown-list">
+        <strong>Unknown codes flagged</strong> — these were emitted raw and logged. Check with Merchandising.
+        <ul>${list}${more}</ul>
+      </div>`;
+  }
+
+  // Bind downloads
+  const dataBlob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  $('dl-data').onclick = () => triggerDownload(dataBlob, 'cover-families.json');
+  $('dl-report').onclick = () => triggerDownload(reportBlob, 'extraction-report.json');
+  $('size-data').textContent = `${(dataBlob.size / 1024).toFixed(1)} KB`;
+  $('size-report').textContent = `${(reportBlob.size / 1024).toFixed(1)} KB`;
+
+  // Preview first record
+  if (data.coverFamilies.length) {
+    $('preview-content').textContent = JSON.stringify(data.coverFamilies[0], null, 2);
+  }
+
+  $('status-title').textContent = `Extracted from ${sourceFileName}`;
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+
+async function handleFile(file) {
+  clearError();
+  $('filename').textContent = file.name;
+  try {
+    const buf = await file.arrayBuffer();
+    const wb = XLSX.read(buf, { type: 'array', cellStyles: true, cellNF: true, cellDates: true });
+    const { coverFamiliesJson, reportJson } = extractAll(wb, file.name);
+    renderResults(coverFamiliesJson, reportJson, file.name);
+  } catch (e) {
+    console.error(e);
+    showError(e.message || String(e));
+  }
+}
+
+function init() {
+  const input = $('file-input');
+  $('upload-btn').addEventListener('click', () => input.click());
+  input.addEventListener('change', e => {
+    const file = e.target.files?.[0];
+    if (file) handleFile(file);
+  });
+
+  // Optional drag-and-drop on the upload card (just makes it more forgiving)
+  const card = document.querySelector('.upload');
+  ['dragenter', 'dragover'].forEach(t => card.addEventListener(t, e => {
+    e.preventDefault();
+    card.style.borderColor = 'var(--accent)';
+  }));
+  ['dragleave', 'drop'].forEach(t => card.addEventListener(t, e => {
+    e.preventDefault();
+    card.style.borderColor = '';
+  }));
+  card.addEventListener('drop', e => {
+    const file = e.dataTransfer?.files?.[0];
+    if (file) handleFile(file);
+  });
+}
+
+init();
+</script>
+</body>
+</html>
