@@ -48,19 +48,33 @@ colors, 4 merges, 2 unknown codes (W*S typo at rows 178 and 197).
 Add a third export to `cover-data/` that produces a file importable into
 Oracle BCC.
 
-**Prerequisite**: the session must have `4toddt/lzb-docs` in scope (added via
-the repo selector at claude.ai/code when starting). BCC format spec lives there.
+**Context source**: Oracle BCC import format specifics live in the separate
+`4toddt/lzb-docs` repo. Claude Code on the web sessions are scoped to a single
+GitHub repo, so the relevant subset of lzb-docs gets staged into
+`cover-data/bcc-reference/` on the working branch (excluded from the final
+merge to main).
 
-**Investigation plan** (once unblocked):
-1. Discover the BCC import format. Search lzb-docs for "BCC", "import",
-   "cover", "fabric", "leather", "swatch", and likely extensions
-   (`.csv`, `.xml`). Read any sample import files and existing converter scripts.
-2. Map BCC fields ↔ extractor JSON. Note gaps (SKU IDs, prices, status codes
-   BCC needs but the workbook doesn't provide).
-3. Look for existing BCC-import tooling in lzb-docs — preserve compatibility.
-4. Report back: format summary + field-mapping table + open questions.
+**Look for in `cover-data/bcc-reference/`**:
+- BCC import format spec or schema doc
+- Sample import file (a known-good one)
+- Any existing converter script that builds BCC imports today
+- Field dictionary
+
+**Investigation plan**:
+1. Read everything in `cover-data/bcc-reference/`. Build a mental model of the
+   BCC import format and what each field means.
+2. Map BCC fields ↔ extractor JSON (`cover-families.json`). Note gaps —
+   fields BCC needs that the workbook doesn't carry (SKU IDs, prices,
+   internal status codes).
+3. If an existing converter exists in bcc-reference, understand its
+   assumptions and preserve compatibility rather than fork.
+4. Report back with: format summary, field-mapping table, open questions.
+   Don't write code until the user reviews the investigation.
 
 **Open product questions** (deferred until investigation completes):
 - Import scope: full data, or filtered (active only / drops only / delta)?
 - UI flow: third download button alongside JSON + report, or its own step?
 - Cadence: one-shot per market, or recurring sync?
+
+**Before merging Phase 2 to main**: delete `cover-data/bcc-reference/` — it's
+working context, not a shipped artifact.
