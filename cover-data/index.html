@@ -870,9 +870,12 @@ function buildBccCsv(coverFamilies) {
       tags.push(specLegend[code] || code);
     }
     if (isFabric && fam.wearability === 'P') tags.push('Performance');
-    // Normalize to alphabetical (default JS sort — case-sensitive, capitals
-    // before lowercase, e.g. "Antimicrobial,Performance,Pet Friendly,iClean").
-    const addedMaterialTypes = tags.sort().join(',');
+    // Normalize to alphabetical, case-insensitive so "iClean" sorts by its
+    // letter, not after all capitals (e.g. "Antimicrobial,iClean,Performance,
+    // Pet Friendly").
+    const addedMaterialTypes = tags
+      .sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
+      .join(',');
 
     for (const color of (fam.colors || [])) {
       if (!color.colorCode) continue;
