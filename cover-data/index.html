@@ -870,7 +870,9 @@ function buildBccCsv(coverFamilies) {
       tags.push(specLegend[code] || code);
     }
     if (isFabric && fam.wearability === 'P') tags.push('Performance');
-    const addedMaterialTypes = tags.join(',');
+    // Normalize to alphabetical (default JS sort — case-sensitive, capitals
+    // before lowercase, e.g. "Antimicrobial,Performance,Pet Friendly,iClean").
+    const addedMaterialTypes = tags.sort().join(',');
 
     for (const color of (fam.colors || [])) {
       if (!color.colorCode) continue;
