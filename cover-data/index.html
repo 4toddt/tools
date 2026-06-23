@@ -269,6 +269,10 @@
         <span>Download extraction-report.json</span>
         <span class="size" id="size-report"></span>
       </button>
+      <button type="button" class="dl-btn" id="dl-bcc">
+        <span>Download BCC import CSV</span>
+        <span class="size" id="size-bcc"></span>
+      </button>
     </div>
     <details class="legend-preview" id="preview">
       <summary>Preview first record</summary>
@@ -836,6 +840,50 @@ function extractAll(workbook, sourceFileName) {
 }
 
 // ---------------------------------------------------------------------------
+// BCC import CSV — one row per cover-color, populating the two BCC columns
+// the catalog feed leaves empty: `additionalDetails` (wearability/dot phrase)
+// and `addedMaterialTypes` (decoded specialty codes + the Performance tag
+// when wearability=P on fabric). See bcc-field-inventory.md for the source
+// mapping and bcc-field-display-trace.md for where the field renders.
+// ---------------------------------------------------------------------------
+
+function csvEscape(v) {
+  const s = v == null ? '' : String(v);
+  return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
+}
+
+function buildBccCsv(coverFamilies) {
+  const lines = ['ID,additionalDetails,addedMaterialTypes'];
+  let rowCount = 0;
+
+  for (const fam of coverFamilies) {
+    const isFabric = fam.coverType === 'fabric';
+    const wearLegend = isFabric ? LEGENDS.wearability.fabric : LEGENDS.wearability.leather;
+    const specLegend = isFabric ? LEGENDS.specialty.fabric : LEGENDS.specialty.leather;
+    const surface = isFabric ? 'Fabric' : 'Leather';
+
+    const wearLabel = wearLegend[fam.wearability] || fam.wearability || '';
+    const additionalDetails = wearLabel ? `${wearLabel} ${surface}` : '';
+
+    const tags = [];
+    for (const code of (fam.specialty || [])) {
+      tags.push(specLegend[code] || code);
+    }
+    if (isFabric && fam.wearability === 'P') tags.push('Performance');
+    const addedMaterialTypes = tags.join(',');
+
+    for (const color of (fam.colors || [])) {
+      if (!color.colorCode) continue;
+      const id = `${fam.seriesNumber}${color.colorCode}`;
+      lines.push([id, additionalDetails, addedMaterialTypes].map(csvEscape).join(','));
+      rowCount++;
+    }
+  }
+
+  return { csv: lines.join('\n') + '\n', rowCount };
+}
+
+// ---------------------------------------------------------------------------
 // UI plumbing
 // ---------------------------------------------------------------------------
 
@@ -855,13 +903,15 @@ function renderResults(data, report, sourceFileName) {
   $('status-panel').classList.remove('hidden');
   $('counts').innerHTML = '';
   const counts = report.counts;
+  const bcc = buildBccCsv(data.coverFamilies);
   const items = [
     ['Fabric families', counts.fabricFamilies],
     ['Leather families', counts.leatherFamilies],
     ['Dropped colors', counts.droppedColors],
     ['Merged rows', counts.mergedLeatherRows],
     ['Combo splits', counts.comboSplit],
-    ['Unknown codes', counts.unknownCodes]
+    ['Unknown codes', counts.unknownCodes],
+    ['BCC import rows', bcc.rowCount]
   ];
   for (const [label, n] of items) {
     const el = document.createElement('div');
@@ -889,10 +939,14 @@ function renderResults(data, report, sourceFileName) {
   // Bind downloads
   const dataBlob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const reportBlob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+  const bccBlob = new Blob([bcc.csv], { type: 'text/csv;charset=utf-8' });
+  const bccFilename = `bcc-cover-import-${isoDate(new Date())}.csv`;
   $('dl-data').onclick = () => triggerDownload(dataBlob, 'cover-families.json');
   $('dl-report').onclick = () => triggerDownload(reportBlob, 'extraction-report.json');
+  $('dl-bcc').onclick = () => triggerDownload(bccBlob, bccFilename);
   $('size-data').textContent = `${(dataBlob.size / 1024).toFixed(1)} KB`;
   $('size-report').textContent = `${(reportBlob.size / 1024).toFixed(1)} KB`;
+  $('size-bcc').textContent = `${(bccBlob.size / 1024).toFixed(1)} KB`;
 
   // Preview first record
   if (data.coverFamilies.length) {

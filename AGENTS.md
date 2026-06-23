@@ -43,38 +43,23 @@ Grandview (split into FL2026+LB2026 siblings), Lota (familyStatus "Phase Out").
 Expected counts on the v.5.01 workbook: 187 fabric, 38 leather, 6 dropped
 colors, 4 merges, 2 unknown codes (W*S typo at rows 178 and 197).
 
-## Open work — Phase 2: Oracle BCC export
+## Phase 2 — Oracle BCC import CSV
 
-Add a third export to `cover-data/` that produces a file importable into
-Oracle BCC.
+A third download button on `cover-data/` emits `bcc-cover-import-YYYY-MM-DD.csv`,
+ready for manual upload via BCC's admin UI. It populates the two BCC cover-SKU
+columns the automated catalog feed (`LZB_Catalog_covers.txt`) leaves empty:
 
-**Context source**: Oracle BCC import format specifics live in the separate
-`4toddt/lzb-docs` repo. Claude Code on the web sessions are scoped to a single
-GitHub repo, so the relevant subset of lzb-docs gets staged into
-`cover-data/bcc-reference/` on the working branch (excluded from the final
-merge to main).
+| BCC column | Source | Format |
+|---|---|---|
+| `additionalDetails` | wearability/dot code | `Normal Fabric`, `Medium Fabric`, `Performance Fabric`, `Authentic Leather`, `Performance Leather`, `Nubuck Leather` |
+| `addedMaterialTypes` | specialty codes + wearability=P tag | comma-separated decoded names; "Performance" appended for fabric when wearability=P |
 
-**Look for in `cover-data/bcc-reference/`**:
-- BCC import format spec or schema doc
-- Sample import file (a known-good one)
-- Any existing converter script that builds BCC imports today
-- Field dictionary
+Primary key: `ID = seriesNumber + colorCode` (no delimiter), one row per
+cover-color SKU (~835 rows on v.5.15.2026). Multi-value `addedMaterialTypes`
+gets RFC 4180 double-quoted. The mapping rationale and BCC field-renderer
+trace live (temporarily) in the `bcc-cover-sku-reconciliation/` folder —
+delete that folder after the first successful import is verified.
 
-**Investigation plan**:
-1. Read everything in `cover-data/bcc-reference/`. Build a mental model of the
-   BCC import format and what each field means.
-2. Map BCC fields ↔ extractor JSON (`cover-families.json`). Note gaps —
-   fields BCC needs that the workbook doesn't carry (SKU IDs, prices,
-   internal status codes).
-3. If an existing converter exists in bcc-reference, understand its
-   assumptions and preserve compatibility rather than fork.
-4. Report back with: format summary, field-mapping table, open questions.
-   Don't write code until the user reviews the investigation.
-
-**Open product questions** (deferred until investigation completes):
-- Import scope: full data, or filtered (active only / drops only / delta)?
-- UI flow: third download button alongside JSON + report, or its own step?
-- Cadence: one-shot per market, or recurring sync?
-
-**Before merging Phase 2 to main**: delete `cover-data/bcc-reference/` — it's
-working context, not a shipped artifact.
+**Where to change**: `buildBccCsv()` near the bottom of
+`cover-data/index.html`. If BCC's import expects different column names or
+needs more fields, edit there.
