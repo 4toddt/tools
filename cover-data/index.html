@@ -874,7 +874,10 @@ function buildBccCsv(coverFamilies) {
     for (const code of (fam.specialty || [])) {
       tags.push(specLegend[code] || code);
     }
-    if (isFabric && fam.wearability === 'P') tags.push('Performance');
+    // Performance covers carry a "Performance" tag in addedMaterialTypes —
+    // for both fabric (wearability=P) and leather (Performance dot=P). BCC's
+    // export applies this to every Performance fabric and leather row.
+    if (fam.wearability === 'P') tags.push('Performance');
     // Normalize to alphabetical, case-insensitive so "iClean" sorts by its
     // letter, not after all capitals (e.g. "Antimicrobial,iClean,Performance,
     // Pet Friendly").
