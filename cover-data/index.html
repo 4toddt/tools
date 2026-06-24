@@ -853,7 +853,12 @@ function csvEscape(v) {
 }
 
 function buildBccCsv(coverFamilies) {
-  const lines = ['ID,additionalDetails,addedMaterialTypes'];
+  // Row 1 metadata banner — BCC's importer parses this to determine the
+  // repository path and item type. The single-space "spacer" cells and the
+  // trailing comma are taken verbatim from a known-good BCC export
+  // (bcc-cover-sku-reconciliation/data/260501161753export.csv row 1).
+  const META = '/atg/commerce/catalog/SecureProductCatalog:coverSku, ,TIMEFORMAT=M/d/yyyy h:mm a, ,LOCALE=en_US,';
+  const lines = [META, 'ID,additionalDetails,addedMaterialTypes'];
   let rowCount = 0;
 
   for (const fam of coverFamilies) {
@@ -885,7 +890,9 @@ function buildBccCsv(coverFamilies) {
     }
   }
 
-  return { csv: lines.join('\n') + '\n', rowCount };
+  // Prepend UTF-8 BOM — BCC's export uses one, and importers built for that
+  // format may reject a no-BOM file as encoding-ambiguous.
+  return { csv: '﻿' + lines.join('\n') + '\n', rowCount };
 }
 
 // ---------------------------------------------------------------------------
