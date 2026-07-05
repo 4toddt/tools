@@ -10,14 +10,64 @@
         @import url('https://fonts.googleapis.com/css2?family=Georgia:wght@400;600&family=Inter:wght@400;500;600&display=swap');
         
         body { font-family: 'Inter', system-ui, sans-serif; }
-        .prose { font-family: 'Georgia', Georgia, serif; font-size: 1.05rem; line-height: 1.8; }
-        .scripture { font-family: 'Georgia', Georgia, serif; font-style: italic; color: #374151; border-left: 4px solid #9ca3af; padding-left: 1.25rem; margin: 1.5rem 0; }
-        .greek { font-family: 'Georgia', Georgia, serif; font-style: italic; color: #1f2937; background-color: #f3f4f6; padding: 0.1rem 0.35rem; border-radius: 3px; }
-        .section-header { font-family: 'Inter', system-ui, sans-serif; font-weight: 600; letter-spacing: -0.025em; }
-        .essay-image { border-radius: 0.5rem; box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); margin: 2rem auto; max-width: 100%; }
-        .caption { font-size: 0.875rem; color: #6b7280; text-align: center; margin-top: 0.5rem; font-style: italic; }
-        .verse-block { background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.5rem; padding: 1.5rem; margin: 1.5rem 0; }
-        .verse-num { font-weight: 600; color: #475569; font-size: 0.9rem; }
+        .prose { font-family: 'Georgia', Georgia, serif; font-size: 1.05rem; line-height: 1.75; }
+        .greek { 
+            font-family: 'Georgia', Georgia, serif; 
+            font-style: italic; 
+            color: #1f2937; 
+            background-color: #f1f5f9; 
+            padding: 0.05rem 0.4rem; 
+            border-radius: 4px; 
+            border-bottom: 1px solid #cbd5e1;
+        }
+        .section-header { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            font-weight: 600; 
+            letter-spacing: -0.025em;
+        }
+        .essay-image { 
+            border-radius: 0.5rem; 
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); 
+            margin: 2.5rem auto 0.75rem;
+            max-width: 100%;
+            display: block;
+        }
+        .caption { 
+            font-size: 0.875rem; 
+            color: #64748b; 
+            text-align: center; 
+            margin-bottom: 2rem; 
+            font-style: italic; 
+            max-width: 42rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .verse-block { 
+            background-color: #f8fafc; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 0.5rem; 
+            padding: 1.75rem 1.5rem; 
+            margin: 2rem 0;
+            line-height: 1.7;
+        }
+        .verse-num { 
+            font-weight: 600; 
+            color: #475569; 
+            font-size: 0.9rem;
+            margin-right: 0.35rem;
+        }
+        .subsection-header {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1.25rem;
+            margin-top: 2rem;
+        }
+        h2.section-header {
+            margin-top: 3rem;
+            margin-bottom: 1.25rem;
+        }
+        .prose p {
+            margin-bottom: 1.1rem;
+        }
     </style>
 </head>
 <body class="bg-stone-50 text-stone-800">
@@ -40,21 +90,23 @@
         </div>
     </header>
 
-    <div class="max-w-3xl mx-auto px-6 pt-10 pb-16">
+    <div class="max-w-3xl mx-auto px-6 pt-8 pb-20">
+        
         <!-- Hero Image -->
-        <div class="mb-10">
+        <div class="mb-8">
             <img src="images/IMG_0071.jpeg" alt="Jesus at the boat with the healed man begging to stay with him" class="essay-image w-full">
             <p class="caption">As he was stepping into the boat, the man who had been demonized kept begging him that he might be with him. (Mark 5:18)</p>
         </div>
 
-        <h1 class="text-4xl font-semibold tracking-tighter text-stone-900 mb-3">Mark 5:18-20: Sent Instead of Kept</h1>
-        <p class="text-lg text-stone-600 mb-8">Every other person Jesus heals in the first half of Mark is told to keep quiet. This man is told to talk. He is also the only healed person in the Gospel who asks to join the traveling company and is refused.</p>
+        <h1 class="text-4xl font-semibold tracking-tighter text-stone-900 mb-4">Mark 5:18-20: Sent Instead of Kept</h1>
+        
+        <p class="text-[1.1rem] text-stone-600 leading-relaxed mb-10 max-w-[42rem]">Every other person Jesus heals in the first half of Mark is told to keep quiet. This man is told to talk. He is also the only healed person in the Gospel who asks to join the traveling company and is refused. Those two facts belong together, and they are not arbitrary: Mark has built the closing scene of the Gerasene exorcism as a deliberate photographic negative of the call of the Twelve in 3:14.</p>
 
         <div class="prose max-w-none text-[1.05rem] leading-relaxed text-stone-700">
             
-            <p>Those two facts belong together, and they are not arbitrary: Mark has built the closing scene of the Gerasene exorcism as a deliberate photographic negative of the call of the Twelve in 3:14. The man asks for exactly the thing the Twelve were given, is denied it, and is then handed the other half of their commission. Reading the coda that way is not a homiletical flourish. It rests on a verbatim verbal link that the Greek makes unmistakable and most English translations quietly dissolve.</p>
+            <p>The man asks for exactly the thing the Twelve were given, is denied it, and is then handed the other half of their commission. Reading the coda that way is not a homiletical flourish. It rests on a verbatim verbal link that the Greek makes unmistakable and most English translations quietly dissolve.</p>
 
-            <h2 class="section-header text-2xl text-stone-900 mt-10 mb-4">Here is the unit, broken to keep the three speakers and the shifts between them visible.</h2>
+            <h2 class="section-header text-2xl text-stone-900">Here is the unit, broken to keep the three speakers and the shifts between them visible.</h2>
             
             <div class="verse-block">
                 <p class="mb-4"><span class="verse-num">18</span> And as he was stepping into the boat, the man who had been demonized kept begging him that he might be with him.</p>
@@ -63,9 +115,9 @@
                 <p><span class="verse-num">20</span> And he went off and began to herald throughout the Decapolis how much Jesus had done for him. And everyone was marveling.</p>
             </div>
 
-            <h2 class="section-header text-2xl text-stone-900 mt-10 mb-4">Translation notes</h2>
+            <h2 class="section-header text-2xl text-stone-900">Translation notes</h2>
             
-            <h3 class="font-semibold text-stone-900 mt-6 mb-2">Load-bearing</h3>
+            <h3 class="font-semibold text-stone-900 mt-6 mb-3">Load-bearing</h3>
             
             <p><strong>18, "that he might be with him"</strong> (<span class="greek">hina met' autou ē</span>). Most versions render this "begged to go with him" (NIV, NLT), which flattens it into a request for a ride. The Greek is a purpose clause built on the verb "to be": <span class="greek">that he might be with him</span>. It is the same construction Mark used when Jesus appointed the Twelve in 3:14, <span class="greek">hina ōsin met' autou</span>, "that they might be with him." Same preposition, same verb, same syntactic frame. The man is not asking for transport. He is asking, in Mark's own technical vocabulary, to be made a disciple. The whole reading below turns on this being a real echo rather than a coincidence, so it is worth saying plainly why it is real: the phrase "be with him" is not idiomatic Greek for "accompany," and Mark had ordinary verbs available for that; he chose the wording that names the office of the Twelve.</p>
 
@@ -75,7 +127,7 @@
 
             <p><strong>20, "began to herald"</strong> (<span class="greek">ērxato kēryssein</span>). Not merely "tell." <span class="greek">Kēryssō</span> is the herald's verb, the word for public proclamation. It is what John does (1:4), what Jesus does (1:14, 1:38-39), and the second half of what the Twelve are appointed to do in 3:14 (<span class="greek">hina apostellē autous kēryssein</span>, "that he might send them out to herald"). The healed man performs the apostolic verb.</p>
 
-            <h3 class="font-semibold text-stone-900 mt-6 mb-2">Depth</h3>
+            <h3 class="font-semibold text-stone-900 subsection-header mb-3">Depth</h3>
             
             <p><strong>19, "report"</strong> (<span class="greek">apangeilon</span>, aorist imperative) is a lower-register word than <span class="greek">kēryssein</span> in v. 20. Jesus assigns a household errand ("report to your own people"); the man escalates it into regional heralding. The verbs track the widening scope.</p>
 
@@ -84,12 +136,12 @@
             <p><strong>19, "to your home, to your own people"</strong> (<span class="greek">eis ton oikon sou pros tous sous</span>). Two phrases, not one: to the house, and to the kin. The man is sent back to the precise society that had chained him among the tombs.</p>
 
             <!-- Image 2: The Photographic Negative -->
-            <div class="my-10">
+            <div>
                 <img src="images/IMG_0072.jpeg" alt="Jesus commissioning the Twelve on a Galilean hillside" class="essay-image w-full">
                 <p class="caption">Jesus made twelve… that they might be with him and that he might send them out to herald. (Mark 3:14)</p>
             </div>
 
-            <h2 class="section-header text-2xl text-stone-900 mt-10 mb-4">The negative image of the Twelve</h2>
+            <h2 class="section-header text-2xl text-stone-900">The negative image of the Twelve</h2>
             
             <p>To feel the force of v. 18 you have to hear where the reader has already met its wording. In 3:14 Jesus "made twelve, whom he also named apostles, <span class="greek">hina ōsin met' autou</span>, that they might be with him and that he might send them out to herald." The appointment has two clauses: presence, then mission. <span class="greek">Be with him</span>, then <span class="greek">sent to proclaim</span>. Discipleship in Mark is defined by that pairing.</p>
 
@@ -98,12 +150,12 @@
             <p>This is not sentimental. It cuts against the natural expectation that the person most transformed should be the one who stays closest. Mark has spent the pericope training that expectation and then breaking it, and he does it through a single repeated verb. Across the second half of the story, <span class="greek">parakaleō</span>, "beg, implore," rings four times, and each time it is a request put to Jesus. The unclean spirits beg not to be driven from the region (5:10). The demons beg to be sent into the pigs (5:12), and Jesus grants it (<span class="greek">epetrepsen</span>, "he permitted them," 5:13). The townspeople beg him to leave their territory (5:17), and he grants that too, boarding the boat (5:18). Then the healed man begs to be with him (5:18), and this is the one request Jesus denies. The demons who want relocation get it; the crowd that wants Jesus gone gets its wish; the man who wants to stay is sent away. The verb makes the pattern audible: everyone who wants distance from Jesus is accommodated, and the one who wants nearness is redirected into mission. The denial is the commission.</p>
 
             <!-- Image 3: The Request -->
-            <div class="my-10">
+            <div>
                 <img src="images/IMG_0073.jpeg" alt="Jesus and the healed man in intense conversation at the shore" class="essay-image w-full">
                 <p class="caption">The man who had been demonized kept begging him that he might be with him.</p>
             </div>
 
-            <h2 class="section-header text-2xl text-stone-900 mt-10 mb-4">What the Lord did, what Jesus did</h2>
+            <h2 class="section-header text-2xl text-stone-900">What the Lord did, what Jesus did</h2>
             
             <p>The most demanding move in the passage is the one that survives least well in English. In v. 19 Jesus tells the man to "report to them how much <span class="greek">the Lord</span> has done for you, and how <span class="greek">he</span> had mercy on you." On Jesus' lips, and to this man's ears, <span class="greek">ho kyrios</span> is the natural word for God. The command is a command to give God the glory: go tell your people what God has done. The register is thoroughly Septuagintal. It is the language of Israel's thanksgiving, the summons of the rescued individual to testify before the assembly. Psalm 66:16 (65 LXX) is the type: "Come, hear, all you who fear God, and I will tell <span class="greek">what he has done</span> (<span class="greek">hosa epoiēsen</span>) for my soul." Mark's <span class="greek">hosa ... pepoiēken</span> sits in that idiom. The man is being told to give the testimony a delivered Israelite gives to Yahweh.</p>
 
@@ -114,12 +166,12 @@
             <p>The reading holds only as far as the substitution is genuinely Mark's design and not an accident of style, so it is worth being honest about the ceiling. Mark could conceivably intend nothing more than "Jesus is the Lord's agent, so to speak of one is to speak of the other." But the placement is against that minimal reading. Mark has just spent the prologue establishing Jesus as the <span class="greek">kyrios</span> of Isaiah's highway, and he will spend the rest of the Gospel letting the demons, not the disciples, be the ones who correctly name Jesus "Son of the Most High God" (5:7). A narrator that deliberate does not stumble into the one substitution that matters most.</p>
 
             <!-- Image 4: The Commission -->
-            <div class="my-10">
+            <div>
                 <img src="images/IMG_0074.jpeg" alt="Jesus directing the healed man back toward his home and people" class="essay-image w-full">
                 <p class="caption">Go to your home, to your own people, and report to them how much the Lord has done for you, and how he had mercy on you.</p>
             </div>
 
-            <h2 class="section-header text-2xl text-stone-900 mt-10 mb-4">Sent to the ten cities</h2>
+            <h2 class="section-header text-2xl text-stone-900">Sent to the ten cities</h2>
             
             <p>Two details of scope close the passage, and both point the same direction. First, the errand grows in the telling. Jesus says <span class="greek">report</span> (<span class="greek">apangeilon</span>) to your <span class="greek">household</span> and your <span class="greek">own people</span> (<span class="greek">eis ton oikon sou pros tous sous</span>). The man <span class="greek">heralds</span> (<span class="greek">kēryssein</span>) throughout the <span class="greek">Decapolis</span> (<span class="greek">en tē Dekapolei</span>), the federation of ten Hellenized cities east of the Jordan. A domestic word of testimony becomes a public proclamation across a Gentile region. This is not disobedience; it is the same overspill of the news that Mark records everywhere else in these chapters, where commands to silence are broken by sheer astonishment. Here, uniquely, there is no command to break. This is the one healing in Mark's first half where Jesus authorizes the telling.</p>
 
@@ -128,7 +180,7 @@
             <p>Second, recall who this man was before v. 18. He lived among the tombs (5:3) and among swine (5:11), a Gentile in a land of the dead and the impure. That specific pairing, dwelling in tombs and living among swine, is the portrait Isaiah draws of rebellious humanity under judgment: a people "who sit among the graves and lodge in secret places, who eat swine's flesh" (Isaiah 65:4). The two most striking marks of the man's degradation are precisely Isaiah's two marks of the nation that provokes God to his face. This is resonance rather than citation, since Mark gives no quotation formula, but it is resonance of an unusually exact kind, and it opens onto the payoff. The Isaiah oracle begins: "I was ready to be found by those who did not seek me; I said, 'Here I am, here I am,' to a nation not called by my name" (Isaiah 65:1). That is the theological situation of the Gerasene shore. Jesus crosses the sea to a place no one summoned him, meets the man who embodies Isaiah's tomb-dwelling, swine-eating outsider, and restores him. The man who was the icon of the nation under wrath becomes the first herald in Gentile land of what the Lord, who is Jesus, has done.</p>
 
             <!-- Image 5: The Herald -->
-            <div class="my-10">
+            <div>
                 <img src="images/IMG_0075.jpeg" alt="The healed man proclaiming in a Decapolis public square with a crowd marveling" class="essay-image w-full">
                 <p class="caption">He went off and began to herald throughout the Decapolis how much Jesus had done for him. And everyone was marveling.</p>
             </div>
@@ -136,7 +188,7 @@
             <p>Mark ends the scene there, with a Gentile proclaiming across ten Gentile cities and everyone marveling, and the Gospel will not return an apostle to this territory for chapters. The composer has planted, before the mission of the Twelve is even launched (6:7), a lone sent man carrying the second clause of their commission into the world beyond Israel. He was not permitted to be with Jesus. He was permitted to be sent. In Mark's account that is not the lesser gift; it is the shape the mission takes once the Lord has crossed to the other side.</p>
 
             <!-- Image 6: Closing -->
-            <div class="my-10">
+            <div>
                 <img src="images/IMG_0076.jpeg" alt="The healed man walking a purposeful path through the Decapolis region with the Sea of Galilee visible behind him" class="essay-image w-full">
                 <p class="caption">He was not permitted to be with Jesus. He was permitted to be sent. In Mark's account that is not the lesser gift; it is the shape the mission takes once the Lord has crossed to the other side.</p>
             </div>
