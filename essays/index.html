@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Essays • Todd Townsend</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Georgia:wght@400;700&family=Inter:wght@400;500;600&display=swap">
+    <style>
+        body { font-family: 'Georgia', serif; }
+        .heading { font-family: 'Inter', system_ui, sans-serif; }
+        .essay-card { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .essay-card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1); }
+        .scripture { font-style: italic; color: #4b5563; }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-900">
+    <div class="max-w-3xl mx-auto px-6 py-12">
+        <!-- Header -->
+        <div class="mb-12">
+            <div class="flex items-center gap-x-3 mb-3">
+                <div class="w-9 h-9 bg-stone-900 rounded-full flex items-center justify-center">
+                    <span class="text-white text-xl font-semibold tracking-tighter">TT</span>
+                </div>
+                <div>
+                    <h1 class="text-4xl font-semibold tracking-tighter heading">Essays</h1>
+                    <p class="text-stone-600 text-lg">Biblical exegesis and theological reflection</p>
+                </div>
+            </div>
+            <p class="text-stone-600 max-w-md mt-4">
+                Close readings of Scripture with attention to literary structure, Greek wording, and the shape of the gospel.
+            </p>
+        </div>
+
+        <!-- Essay List -->
+        <div class="space-y-6">
+            <!-- Essay 1 -->
+            <a href="./mark-5-sent-instead-of-kept/" class="block group">
+                <div class="essay-card bg-white border border-stone-200 rounded-2xl p-8 hover:border-stone-300">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex-1">
+                            <div class="flex items-center gap-x-3 mb-3">
+                                <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-stone-100 text-stone-700 tracking-wide">MARK 5</span>
+                                <span class="text-stone-500 text-sm">July 2026</span>
+                            </div>
+                            
+                            <h2 class="text-2xl font-semibold tracking-tight heading mb-3 group-hover:text-stone-700 transition-colors">
+                                Mark 5:18–20: Sent Instead of Kept
+                            </h2>
+                            
+                            <p class="text-stone-600 leading-relaxed mb-4">
+                                A close reading of the Gerasene demoniac pericope. Mark structures the scene as a deliberate photographic negative of the calling of the Twelve — the healed man is denied the companionship the disciples were given, and instead receives the mission of proclamation in Gentile territory.
+                            </p>
+                            
+                            <div class="flex items-center text-sm font-medium text-stone-700 group-hover:text-stone-900 transition-colors">
+                                Read the full essay 
+                                <span class="ml-1.5 group-hover:ml-2 transition-all">→</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Footer note -->
+        <div class="mt-16 pt-8 border-t border-stone-200">
+            <p class="text-sm text-stone-500">
+                New essays are added periodically. All content is also available in the author’s personal second brain.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
