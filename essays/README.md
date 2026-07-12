@@ -39,11 +39,13 @@ Live site: [https://4toddt.github.io/tools/essays/](https://4toddt.github.io/too
    Inside the new folder, create `images/`.
 
 4. **Generate the images**  
-   Use Grok Imagine to create 5–7 images that illustrate the key movements of the argument.  
-   - Images should support the exegesis, not decorate it.  
-   - Keep a consistent visual style within one essay (same figure style, palette, lighting).  
-   - For narrative pericopes: prefer commission / hinge moments over chaos spectacle.  
-   - For theme essays: landscapes and conceptual beats are fine; keep ANE material secondary to the biblical claim (polemic, not museum slideshow).
+   Follow house rules in second-brain `claude-refs/essay-image-strategy.md` (section-cadence hybrid).  
+   - Default **4–6 body plates + optional hero**; fewer if claims are covered.  
+   - Jobs: structure/rest, organize, and/or claim—not pure decoration.  
+   - **No clustering** (never image → heading → one short para → image).  
+   - One primary visual family; don’t triple it. Apparatus (Greek lists) stays unimaged.  
+   - Keep a consistent visual style within one essay.  
+   - Place after the claim is stated; scroll the full essay before ship.
 
 5. **Upload the images**  
    Upload them into the `images/` folder. You can name them descriptively (`hero.jpg`, `parallel.jpg`, etc.) or sequentially. Update the `index.html` to reference the correct filenames.
