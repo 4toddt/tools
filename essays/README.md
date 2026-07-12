@@ -14,6 +14,9 @@ essays/
 ├── mark-5-sent-instead-of-kept/                  # Pericope essay (good HTML template)
 │   ├── index.html
 │   └── images/
+├── philippians-3-4-8-the-audit/
+│   ├── index.html
+│   └── images/
 ├── genesis-1-overture-in-sevens/
 │   ├── index.html
 │   └── images/
