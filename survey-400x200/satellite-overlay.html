@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Survey Overlay — 11521 Jones St • 400×200 Detail</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
+    #map { height: 100%; width: 100%; }
+    .info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      padding: 10px 14px;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      font-size: 13px;
+      line-height: 1.4;
+      max-width: 420px;
+    }
+    .info h1 { font-size: 15px; margin-bottom: 4px; }
+    .info .meta { color: #444; font-size: 12px; }
+    .disclaimer {
+      position: absolute;
+      bottom: 10px;
+      left: 10px;
+      right: 10px;
+      z-index: 1000;
+      background: rgba(254,243,199,0.97);
+      border: 1px solid #d97706;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 11px;
+      color: #78350f;
+      max-width: 520px;
+    }
+    .legend {
+      position: absolute;
+      bottom: 90px;
+      right: 10px;
+      z-index: 1000;
+      background: rgba(255,255,255,0.95);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      box-shadow: 0 1px 8px rgba(0,0,0,0.2);
+    }
+    .legend span { display: inline-block; width: 18px; height: 4px; margin-right: 6px; vertical-align: middle; }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h1>400 × 200 Rectangle Overlay</h1>
+    <div class="meta">
+      11521 Jones St, Carleton, MI 48117<br>
+      Approx. location of the SW 400′×200′ parcel from 2001 Andrus survey (Job 01S-9894)<br>
+      Adjacent to West ¼ Corner of Section 20, T5S R9E
+    </div>
+  </div>
+
+  <div id="map"></div>
+
+  <div class="legend">
+    <div><span style="background:#2563eb"></span> ~400′ × 200′ (your plot)</div>
+    <div style="margin-top:4px"><span style="background:#dc2626"></span> Approx larger 13.9-ac outline</div>
+  </div>
+
+  <div class="disclaimer">
+    <strong>Accuracy note:</strong> Lines are reconstructed from the 2001 survey dimensions and oriented using Jones St + typical PLSS geometry. Imagery from different years can shift 1–5+ m. This is for personal reference only — not a legal boundary. Recover the actual iron pins (or hire a surveyor) for precision.
+  </div>
+
+  <script>
+    // Approximate center of the property from Nominatim geocode
+    const center = [42.0446873, -83.3894082];
+
+    const map = L.map('map', {
+      center: center,
+      zoom: 18,
+      maxZoom: 20
+    });
+
+    // Esri World Imagery (satellite)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles © Esri — Source: Esri, Maxar, Earthstar Geographics',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Optional labels layer
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19,
+      opacity: 0.7
+    }).addTo(map);
+
+    // Approximate size of 400 ft E-W × 200 ft N-S in degrees
+    // 1 degree lat ≈ 364000 ft; 1 degree lon at this lat ≈ 270000 ft
+    const ftPerDegLat = 364000;
+    const ftPerDegLon = 270000;
+
+    const halfW = (400 / 2) / ftPerDegLon;
+    const halfH = (200 / 2) / ftPerDegLat;
+
+    const rectCenter = center;
+
+    const sw = [rectCenter[0] - halfH, rectCenter[1] - halfW];
+    const se = [rectCenter[0] - halfH, rectCenter[1] + halfW];
+    const ne = [rectCenter[0] + halfH, rectCenter[1] + halfW];
+    const nw = [rectCenter[0] + halfH, rectCenter[1] - halfW];
+
+    // The 400 × 200 rectangle (blue)
+    const plot = L.polygon([sw, se, ne, nw], {
+      color: '#2563eb',
+      weight: 3,
+      fillColor: '#3b82f6',
+      fillOpacity: 0.25
+    }).addTo(map);
+
+    plot.bindPopup(`<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>SET pins at all four corners (2001)`);
+
+    // Approximate larger 13.9-acre parcel (schematic)
+    const largeHalfW = (900 / 2) / ftPerDegLon;
+    const largeHalfH = (700 / 2) / ftPerDegLat;
+    const largeCenter = [center[0] + 0.0012, center[1] + 0.0008];
+
+    const lsw = [largeCenter[0] - largeHalfH, largeCenter[1] - largeHalfW];
+    const lse = [largeCenter[0] - largeHalfH, largeCenter[1] + largeHalfW];
+    const lne = [largeCenter[0] + largeHalfH, largeCenter[1] + largeHalfW];
+    const lnw = [largeCenter[0] + largeHalfH, largeCenter[1] - largeHalfW];
+
+    const larger = L.polygon([lsw, lse, lne, lnw], {
+      color: '#dc2626',
+      weight: 2,
+      dashArray: '6 4',
+      fillColor: '#ef4444',
+      fillOpacity: 0.08
+    }).addTo(map);
+
+    larger.bindPopup('Approximate extent of the larger 13.906-acre parcel from the 2001 survey (schematic)');
+
+    // Marker for the address
+    L.marker(center).addTo(map)
+      .bindPopup('<b>11521 Jones St</b><br>Approximate location of the 400×200 rectangle')
+      .openPopup();
+
+    L.control.scale({ imperial: true, metric: false }).addTo(map);
+  </script>
+</body>
+</html>
