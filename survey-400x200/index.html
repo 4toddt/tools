@@ -2,189 +2,232 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>400 × 200 Rectangle – 2001 Boundary Survey Sketch</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>400 × 200 Rectangle Detail — Job 01S-9894</title>
   <style>
-    :root {
-      --ink: #1a1a1a;
-      --muted: #555;
-      --accent: #1e40af;
-      --pin: #b91c1c;
-      --bg: #fafafa;
-    }
-    * { box-sizing: border-box; }
-    body {
-      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-      margin: 0;
-      padding: 1.5rem;
-      background: var(--bg);
-      color: var(--ink);
-      line-height: 1.5;
-    }
-    .container {
-      max-width: 920px;
-      margin: 0 auto;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-      padding: 2rem;
-    }
-    h1 {
-      font-size: 1.5rem;
-      margin: 0 0 0.25rem;
-      font-weight: 700;
-    }
-    .subtitle {
-      color: var(--muted);
-      font-size: 0.95rem;
-      margin-bottom: 1.5rem;
-    }
-    .svg-wrap {
-      width: 100%;
-      overflow-x: auto;
-      border: 1px solid #e5e7eb;
-      border-radius: 8px;
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
       background: #fff;
-      padding: 1rem;
+      color: #111;
+      font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+      -webkit-text-size-adjust: 100%;
     }
-    svg {
-      display: block;
+    .page {
       max-width: 100%;
+      margin: 0 auto;
+      padding: 0.5rem 0.4rem 1rem;
+    }
+    @media (min-width: 700px) {
+      .page { padding: 1rem 1.25rem 1.5rem; max-width: 980px; }
+    }
+    header {
+      padding: 0.4rem 0.25rem 0.6rem;
+      border-bottom: 2px solid #111;
+      margin-bottom: 0.6rem;
+    }
+    header h1 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    header .meta {
+      font-size: 0.72rem;
+      color: #333;
+      margin-top: 0.2rem;
+      line-height: 1.35;
+    }
+    .drawing {
+      width: 100%;
+      border: 1.5px solid #111;
+      background: #fff;
+      overflow: hidden;
+    }
+    .drawing svg {
+      display: block;
+      width: 100%;
       height: auto;
     }
     .notes {
-      margin-top: 1.75rem;
-      font-size: 0.9rem;
+      margin-top: 0.85rem;
+      font-size: 0.78rem;
+      line-height: 1.45;
+      padding: 0 0.15rem;
     }
     .notes h2 {
-      font-size: 1.1rem;
-      margin: 0 0 0.75rem;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
     }
     .notes ul {
-      margin: 0;
-      padding-left: 1.25rem;
+      list-style: none;
+      padding: 0;
     }
-    .notes li { margin-bottom: 0.4rem; }
+    .notes li {
+      margin-bottom: 0.3rem;
+      padding-left: 0.9rem;
+      position: relative;
+    }
+    .notes li::before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      font-weight: 700;
+    }
     .disclaimer {
-      margin-top: 1.5rem;
-      padding: 0.85rem 1rem;
-      background: #fef3c7;
-      border-left: 4px solid #d97706;
-      font-size: 0.85rem;
+      margin-top: 0.9rem;
+      padding: 0.55rem 0.65rem;
+      border: 1px solid #b45309;
+      background: #fffbeb;
+      font-size: 0.72rem;
+      line-height: 1.4;
       color: #78350f;
-      border-radius: 0 6px 6px 0;
     }
     footer {
-      margin-top: 2rem;
-      font-size: 0.8rem;
-      color: var(--muted);
+      margin-top: 0.9rem;
+      font-size: 0.68rem;
+      color: #555;
       text-align: center;
+      padding-bottom: 0.5rem;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>400 × 200 Rectangle</h1>
-    <p class="subtitle">
-      Dimensioned sketch of the small rectangular parcel near the West ¼ Corner of Section 20<br>
-      Part of the 2001 Boundary Survey &amp; Split (Job 01S-9894 / A09894)<br>
-      Ash Township, Monroe County, Michigan &nbsp;|&nbsp; Surveyor: David A. Andrus, P.S. #40155
-    </p>
+  <div class="page">
+    <header>
+      <h1>BOUNDARY DETAIL — 400.00′ × 200.00′ RECTANGLE</h1>
+      <div class="meta">
+        Part of NW¼ Section 20, T5S, R9E, Ash Township, Monroe County, Michigan<br>
+        Job 01S-9894 / A09894 &nbsp;•&nbsp; March 13, 2001 &nbsp;•&nbsp; David A. Andrus, P.S. #40155<br>
+        J.C. Andrus &amp; Associates, Inc. — Prepared for Charles Collert
+      </div>
+    </header>
 
-    <div class="svg-wrap">
-      <svg viewBox="0 0 880 520" xmlns="http://www.w3.org/2000/svg" font-family="system-ui, sans-serif">
-        <!-- Background -->
-        <rect width="880" height="520" fill="#ffffff"/>
+    <div class="drawing">
+      <svg viewBox="0 0 920 640" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
+        <rect x="8" y="8" width="904" height="624" fill="none" stroke="#111" stroke-width="2"/>
+        <rect x="8" y="8" width="904" height="52" fill="#f8f8f8"/>
+        <line x1="8" y1="60" x2="912" y2="60" stroke="#111" stroke-width="1.5"/>
+        <text x="460" y="30" text-anchor="middle" font-size="16" font-weight="700" fill="#111">400.00′ × 200.00′ RECTANGLE</text>
+        <text x="460" y="48" text-anchor="middle" font-size="11" fill="#333">Southwest corner of the 13.906-acre parcel — adjacent to West ¼ Corner of Section 20</text>
 
-        <!-- Title inside SVG -->
-        <text x="440" y="28" text-anchor="middle" font-size="15" font-weight="700" fill="#1a1a1a">400.00' × 200.00' Rectangle (≈ 1.84 acres)</text>
-        <text x="440" y="48" text-anchor="middle" font-size="12" fill="#555">Focused view of the SW jog adjacent to the West ¼ Corner of Section 20</text>
+        <defs>
+          <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse">
+            <path d="M 28 0 L 0 0 0 28" fill="none" stroke="#e8e8e8" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect x="80" y="90" width="720" height="420" fill="url(#grid)"/>
 
-        <!-- Rectangle outline -->
-        <rect x="140" y="120" width="600" height="300" fill="#eff6ff" stroke="#1e40af" stroke-width="3"/>
+        <rect x="180" y="140" width="560" height="280" fill="#f0f7ff" stroke="#111" stroke-width="2.5"/>
 
-        <!-- Corner pins (set) -->
-        <circle cx="140" cy="120" r="7" fill="#b91c1c"/>
-        <circle cx="740" cy="120" r="7" fill="#b91c1c"/>
-        <circle cx="140" cy="420" r="7" fill="#b91c1c"/>
-        <circle cx="740" cy="420" r="7" fill="#b91c1c"/>
+        <circle cx="180" cy="140" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+        <circle cx="180" cy="140" r="2.5" fill="#111"/>
+        <circle cx="740" cy="140" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+        <circle cx="740" cy="140" r="2.5" fill="#111"/>
+        <circle cx="180" cy="420" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+        <circle cx="180" cy="420" r="2.5" fill="#111"/>
+        <circle cx="740" cy="420" r="6" fill="#fff" stroke="#111" stroke-width="2"/>
+        <circle cx="740" cy="420" r="2.5" fill="#111"/>
 
-        <!-- Pin labels -->
-        <text x="140" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">SET</text>
-        <text x="740" y="108" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">SET</text>
-        <text x="140" y="445" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">SET</text>
-        <text x="740" y="445" text-anchor="middle" font-size="11" font-weight="600" fill="#b91c1c">SET</text>
+        <text x="180" y="125" text-anchor="middle" font-size="10" font-weight="700" fill="#111">SET</text>
+        <text x="740" y="125" text-anchor="middle" font-size="10" font-weight="700" fill="#111">SET</text>
+        <text x="180" y="445" text-anchor="middle" font-size="10" font-weight="700" fill="#111">SET</text>
+        <text x="740" y="445" text-anchor="middle" font-size="10" font-weight="700" fill="#111">SET</text>
 
-        <!-- Dimension lines - North (top) -->
-        <line x1="140" y1="95" x2="740" y2="95" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="140" y1="88" x2="140" y2="102" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="740" y1="88" x2="740" y2="102" stroke="#1a1a1a" stroke-width="1.5"/>
-        <text x="440" y="88" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">400.00'</text>
-        <text x="440" y="72" text-anchor="middle" font-size="11" fill="#555">S 88°33′47″ W  (bearing system of survey)</text>
+        <line x1="180" y1="100" x2="740" y2="100" stroke="#111" stroke-width="1.25"/>
+        <line x1="180" y1="93" x2="180" y2="107" stroke="#111" stroke-width="1.5"/>
+        <line x1="740" y1="93" x2="740" y2="107" stroke="#111" stroke-width="1.5"/>
+        <polygon points="180,100 188,96 188,104" fill="#111"/>
+        <polygon points="740,100 732,96 732,104" fill="#111"/>
+        <text x="460" y="92" text-anchor="middle" font-size="13" font-weight="700" fill="#111">400.00′</text>
+        <text x="460" y="78" text-anchor="middle" font-size="10" fill="#333">S 88°33′47″ W</text>
 
-        <!-- Dimension lines - South (bottom) -->
-        <line x1="140" y1="460" x2="740" y2="460" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="140" y1="453" x2="140" y2="467" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="740" y1="453" x2="740" y2="467" stroke="#1a1a1a" stroke-width="1.5"/>
-        <text x="440" y="482" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">400.00'</text>
+        <line x1="180" y1="460" x2="740" y2="460" stroke="#111" stroke-width="1.25"/>
+        <line x1="180" y1="453" x2="180" y2="467" stroke="#111" stroke-width="1.5"/>
+        <line x1="740" y1="453" x2="740" y2="467" stroke="#111" stroke-width="1.5"/>
+        <polygon points="180,460 188,456 188,464" fill="#111"/>
+        <polygon points="740,460 732,456 732,464" fill="#111"/>
+        <text x="460" y="480" text-anchor="middle" font-size="13" font-weight="700" fill="#111">400.00′</text>
 
-        <!-- Dimension lines - West (left) -->
-        <line x1="115" y1="120" x2="115" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="108" y1="120" x2="122" y2="120" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="108" y1="420" x2="122" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
-        <text x="95" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a" transform="rotate(-90 95 280)">200.00'</text>
+        <line x1="145" y1="140" x2="145" y2="420" stroke="#111" stroke-width="1.25"/>
+        <line x1="138" y1="140" x2="152" y2="140" stroke="#111" stroke-width="1.5"/>
+        <line x1="138" y1="420" x2="152" y2="420" stroke="#111" stroke-width="1.5"/>
+        <polygon points="145,140 141,148 149,148" fill="#111"/>
+        <polygon points="145,420 141,412 149,412" fill="#111"/>
+        <text x="128" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#111" transform="rotate(-90 128 290)">200.00′</text>
 
-        <!-- Dimension lines - East (right) -->
-        <line x1="765" y1="120" x2="765" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="758" y1="120" x2="772" y2="120" stroke="#1a1a1a" stroke-width="1.5"/>
-        <line x1="758" y1="420" x2="772" y2="420" stroke="#1a1a1a" stroke-width="1.5"/>
-        <text x="790" y="280" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a" transform="rotate(90 790 280)">200.00'</text>
+        <line x1="775" y1="140" x2="775" y2="420" stroke="#111" stroke-width="1.25"/>
+        <line x1="768" y1="140" x2="782" y2="140" stroke="#111" stroke-width="1.5"/>
+        <line x1="768" y1="420" x2="782" y2="420" stroke="#111" stroke-width="1.5"/>
+        <polygon points="775,140 771,148 779,148" fill="#111"/>
+        <polygon points="775,420 771,412 779,412" fill="#111"/>
+        <text x="798" y="290" text-anchor="middle" font-size="13" font-weight="700" fill="#111" transform="rotate(90 798 290)">200.00′</text>
 
-        <!-- West 1/4 Corner callout -->
-        <circle cx="95" cy="420" r="9" fill="none" stroke="#047857" stroke-width="2.5"/>
-        <circle cx="95" cy="420" r="4" fill="#047857"/>
-        <line x1="95" y1="420" x2="70" y2="470" stroke="#047857" stroke-width="1.5"/>
-        <text x="10" y="488" font-size="11" fill="#047857" font-weight="600">West ¼ Corner of Section 20</text>
-        <text x="10" y="503" font-size="10" fill="#047857">Found iron pin • L.C.R.C. Liber 1, pp. 245-246</text>
+        <circle cx="120" cy="420" r="10" fill="none" stroke="#047857" stroke-width="2.5"/>
+        <circle cx="120" cy="420" r="4" fill="#047857"/>
+        <line x1="120" y1="420" x2="95" y2="480" stroke="#047857" stroke-width="1.5"/>
+        <text x="20" y="500" font-size="11" font-weight="700" fill="#047857">WEST ¼ CORNER</text>
+        <text x="20" y="515" font-size="10" fill="#047857">Section 20, T5S, R9E</text>
+        <text x="20" y="530" font-size="9.5" fill="#047857">Found iron pin</text>
+        <text x="20" y="544" font-size="9.5" fill="#047857">L.C.R.C. Liber 1, pp. 245-246</text>
 
-        <!-- North arrow -->
-        <g transform="translate(800, 90)">
-          <line x1="0" y1="40" x2="0" y2="0" stroke="#1a1a1a" stroke-width="2"/>
-          <polygon points="0,-8 -6,8 6,8" fill="#1a1a1a"/>
-          <text x="0" y="55" text-anchor="middle" font-size="12" font-weight="700">N</text>
+        <g transform="translate(840, 100)">
+          <circle cx="0" cy="22" r="22" fill="none" stroke="#111" stroke-width="1.5"/>
+          <line x1="0" y1="38" x2="0" y2="6" stroke="#111" stroke-width="2"/>
+          <polygon points="0,2 -5,14 5,14" fill="#111"/>
+          <text x="0" y="52" text-anchor="middle" font-size="11" font-weight="700">N</text>
         </g>
 
-        <!-- Area label inside rectangle -->
-        <text x="440" y="255" text-anchor="middle" font-size="16" font-weight="700" fill="#1e40af">≈ 1.84 acres</text>
-        <text x="440" y="278" text-anchor="middle" font-size="12" fill="#555">(400 × 200 ÷ 43,560)</text>
+        <text x="460" y="255" text-anchor="middle" font-size="15" font-weight="700" fill="#1e3a8a">AREA = 80,000 SQ FT</text>
+        <text x="460" y="275" text-anchor="middle" font-size="13" font-weight="600" fill="#1e3a8a">≈ 1.837 ACRES</text>
+        <text x="460" y="300" text-anchor="middle" font-size="11" fill="#333">400.00′ × 200.00′</text>
 
-        <!-- Legend -->
-        <g transform="translate(20, 30)">
-          <circle cx="8" cy="0" r="5" fill="#b91c1c"/>
-          <text x="20" y="4" font-size="11" fill="#1a1a1a">SET = ⅝″ × 30″ iron pin with reference cap (set March 2001)</text>
+        <rect x="620" y="500" width="270" height="110" fill="#fafafa" stroke="#111" stroke-width="1"/>
+        <text x="635" y="520" font-size="11" font-weight="700" fill="#111">LEGEND</text>
+        <circle cx="645" cy="540" r="5" fill="#fff" stroke="#111" stroke-width="1.5"/>
+        <circle cx="645" cy="540" r="2" fill="#111"/>
+        <text x="660" y="544" font-size="10" fill="#111">SET — ⅝″ × 30″ iron pin w/ reference cap</text>
+        <text x="660" y="558" font-size="10" fill="#111">(set this survey, March 2001)</text>
+        <circle cx="645" cy="580" r="6" fill="none" stroke="#047857" stroke-width="2"/>
+        <circle cx="645" cy="580" r="2.5" fill="#047857"/>
+        <text x="660" y="584" font-size="10" fill="#111">Found section corner (LCRC)</text>
+
+        <g transform="translate(80, 560)">
+          <text x="0" y="-8" font-size="10" font-weight="600" fill="#111">SCALE</text>
+          <line x1="0" y1="0" x2="140" y2="0" stroke="#111" stroke-width="2"/>
+          <line x1="0" y1="-6" x2="0" y2="6" stroke="#111" stroke-width="1.5"/>
+          <line x1="70" y1="-4" x2="70" y2="4" stroke="#111" stroke-width="1"/>
+          <line x1="140" y1="-6" x2="140" y2="6" stroke="#111" stroke-width="1.5"/>
+          <text x="0" y="18" text-anchor="middle" font-size="9" fill="#111">0</text>
+          <text x="70" y="18" text-anchor="middle" font-size="9" fill="#111">50′</text>
+          <text x="140" y="18" text-anchor="middle" font-size="9" fill="#111">100′</text>
         </g>
+
+        <text x="80" y="610" font-size="9" fill="#555">Bearings for angular measurement only — not referenced to true or magnetic north</text>
+        <text x="80" y="624" font-size="9" fill="#555">Original survey notes: Points indicated as “Set” are ⅝″ × 30″ Iron Pins with Reference Caps</text>
       </svg>
     </div>
 
     <div class="notes">
-      <h2>Key facts from the 2001 survey</h2>
+      <h2>Survey Notes</h2>
       <ul>
-        <li><strong>Dimensions:</strong> 400.00 ft east-west × 200.00 ft north-south (exact labels from the original drawing).</li>
-        <li><strong>Area:</strong> 80,000 sq ft ≈ 1.837 acres.</li>
-        <li><strong>Location:</strong> Southwest corner of the larger 13.906-acre parcel, immediately adjacent to the West ¼ Corner of Section 20, T5S, R9E, Ash Township, Monroe County, MI.</li>
-        <li><strong>Bearing system:</strong> Long sides follow the survey’s S 88°33′47″ W / N 88°33′47″ E system (angular measurement only; not true/magnetic north).</li>
-        <li><strong>Monuments:</strong> All four corners are “Set” points — ⅝″ × 30″ iron pins with reference caps placed by David A. Andrus, P.S. #40155 in March 2001.</li>
-        <li><strong>Control:</strong> The West ¼ Corner (found iron pin recorded in L.C.R.C. Liber 1, Pages 245–246) is the primary recovery point for this rectangle.</li>
-        <li><strong>Job reference:</strong> 01S-9894 / A09894, prepared for Charles Collert, J.C. Andrus &amp; Associates, Inc.</li>
+        <li><strong>Parcel:</strong> 400.00 ft E-W × 200.00 ft N-S rectangle (≈ 1.837 acres) forming the southwest jog of the 13.906-acre tract.</li>
+        <li><strong>Monuments:</strong> All four corners are “SET” ⅝″ × 30″ iron pins with reference caps, placed March 2001 by David A. Andrus, P.S. #40155.</li>
+        <li><strong>Primary control:</strong> West ¼ Corner of Section 20 (found iron pin, L.C.R.C. Liber 1, Pages 245–246). Recover this first.</li>
+        <li><strong>Bearing system:</strong> Long sides parallel to S 88°33′47″ W / N 88°33′47″ E used throughout the 2001 plat.</li>
+        <li><strong>Job:</strong> 01S-9894 / A09894 — Boundary Survey and Split of part of the Northwest Quarter of Section 20, T5S, R9E, Ash Township, Monroe County, Michigan.</li>
       </ul>
     </div>
 
     <div class="disclaimer">
-      <strong>Disclaimer:</strong> This is a clean reconstruction prepared from the 2001 survey drawing for personal reference only. It is not a sealed survey, not a legal description, and must not be used for conveyance, construction, or boundary disputes. The original sealed drawing and field notes remain the authoritative source. Contact J.C. Andrus &amp; Associates for official records or a professional locate.
+      <strong>DISCLAIMER:</strong> This is a reconstruction prepared from the original 2001 survey drawing for personal reference only. It is not a sealed survey, not a legal description, and must not be used for conveyance, construction staking, or boundary disputes. The original sealed drawing and field notes remain the authoritative source. Contact J.C. Andrus &amp; Associates for official records or a professional pin locate.
     </div>
 
     <footer>
-      Generated for personal use • Hosted on 4toddt/tools • Based on survey drawing A09894-S-S20T5SR9ENW
+      Reconstruction based on survey drawing A09894-S-S20T5SR9ENW • Hosted on 4toddt/tools
     </footer>
   </div>
 </body>
