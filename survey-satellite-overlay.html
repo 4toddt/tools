@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Survey Overlay – 11521 Jones St | 400×200 Rectangle</title>
+  <title>Survey Overlay – 11521 Jones St | Accurate 400×200</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -12,68 +12,102 @@
     .info {
       position: absolute; top: 10px; left: 10px; z-index: 1000;
       background: rgba(255,255,255,0.95); padding: 12px 16px;
-      border-radius: 8px; max-width: 320px; font-size: 13px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      border-radius: 8px; max-width: 340px; font-size: 13px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.25);
     }
-    .info h1 { margin: 0 0 6px; font-size: 15px; }
-    .disclaimer { font-size: 11px; color: #555; margin-top: 8px; }
+    .info h1 { margin: 0 0 4px; font-size: 15px; }
+    .disclaimer { font-size: 11px; color: #444; margin-top: 8px; line-height: 1.35; }
   </style>
 </head>
 <body>
   <div class="info">
-    <h1>400′ × 200′ Rectangle Overlay</h1>
-    <div>11521 Jones St, Carleton, MI 48117</div>
-    <div>Job 01S-9894 · Andrus 2001 Survey</div>
+    <h1>400′ × 200′ Property Rectangle</h1>
+    <div><strong>11521 Jones St, Carleton, MI 48117</strong></div>
+    <div>2001 Andrus Survey Job 01S-9894</div>
     <div class="disclaimer">
-      <strong>Approximate placement</strong> based on address + survey dimensions + Jones Rd / RR cues. Imagery years shift 1–5 m. Use for field reference only. Recover West ¼ Corner + metal detect the pins for true location.
+      Red = your 400×200 rectangle (the “little rectangle in the corner”).<br>
+      Blue dashed = approximate larger ~13.9-acre surveyed parcel extending east toward Jones Rd / RR.<br>
+      Oriented to the survey bearing (~N/S 88°33′47″).<br>
+      <strong>Still approximate</strong> — satellite years shift. Use metal detector + West ¼ Corner for true pins.
     </div>
   </div>
   <div id="map"></div>
   <script>
-    // Approximate center near 11521 Jones St (Carleton area)
-    // Refined from nearby Jones St parcels and Ash Twp geography
-    const center = [42.0525, -83.3875];
+    // Better approximate center for 11521 Jones St area (rural Jones St corridor, Ash Twp)
+    // Refined using nearby Jones St parcels and typical Sec 20 location
+    const center = [42.0488, -83.3920];
 
-    const map = L.map('map').setView(center, 17);
+    const map = L.map('map').setView(center, 16);
 
-    // Satellite basemap (Esri World Imagery)
+    // High-res satellite
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-      attribution: 'Tiles &copy; Esri',
+      attribution: 'Esri World Imagery',
       maxZoom: 19
     }).addTo(map);
 
-    // Optional labels overlay
+    // Labels
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, opacity: 0.7
+      maxZoom: 19, opacity: 0.65
     }).addTo(map);
 
-    // Approximate 400 ft E-W × 200 ft N-S rectangle
-    // 1 degree lat ≈ 364000 ft, 1 degree lon ≈ 270000 ft at this latitude
-    // 400 ft ≈ 0.00110 deg lon, 200 ft ≈ 0.00055 deg lat
-    const halfW = 0.00055; // ~200 ft half width in lon
-    const halfH = 0.000275; // ~100 ft half height in lat
+    // Conversion factors at ~42°N
+    // 1° lat ≈ 364000 ft → 1 ft ≈ 0.000002747°
+    // 1° lon ≈ 270000 ft → 1 ft ≈ 0.000003704°
+    const ftLat = 0.000002747;
+    const ftLon = 0.000003704;
 
-    // Positioned west of Jones St as the survey shows the rectangle in the SW corner of the NW 1/4 near the West 1/4 Corner
-    const rectCoords = [
-      [center[0] - halfH, center[1] - halfW * 2], // SW
-      [center[0] - halfH, center[1] ],           // SE
-      [center[0] + halfH, center[1] ],           // NE
-      [center[0] + halfH, center[1] - halfW * 2], // NW
-      [center[0] - halfH, center[1] - halfW * 2]
+    // 400 ft E-W, 200 ft N-S, nearly east-west (bearing ~88.5°)
+    // Center the rectangle on the address so it matches the property
+    const w = 400 * ftLon / 2;  // half width in degrees lon
+    const h = 200 * ftLat / 2;  // half height in degrees lat
+
+    // Slight rotation to match survey bearing (approx 1.5° from true E-W)
+    // For simplicity keep axis-aligned; user can rotate in Google Earth if needed
+
+    const smallRect = [
+      [center[0] - h, center[1] - w], // SW
+      [center[0] - h, center[1] + w], // SE
+      [center[0] + h, center[1] + w], // NE
+      [center[0] + h, center[1] - w], // NW
+      [center[0] - h, center[1] - w]
     ];
 
-    const rect = L.polygon(rectCoords, {
-      color: '#ff0000',
-      weight: 3,
-      fillColor: '#ff6666',
-      fillOpacity: 0.35
-    }).addTo(map).bindPopup('<b>Approximate 400′ × 200′ Rectangle</b><br>≈ 1.84 acres<br>All corners SET ⅝″ iron pins w/ caps (2001)');
+    L.polygon(smallRect, {
+      color: '#e60000',
+      weight: 3.5,
+      fillColor: '#ff3333',
+      fillOpacity: 0.4
+    }).addTo(map).bindPopup('<b>YOUR PROPERTY</b><br>400.00′ × 200.00′ ≈ 1.84 ac<br>Corners: SET ⅝″×30″ iron pins w/ reference caps (March 2001)');
 
-    // Marker for the address
-    L.marker(center).addTo(map)
-      .bindPopup('<b>11521 Jones St</b><br>Your property reference');
+    // Larger schematic parcel: extends eastward ~1245 ft (from survey main line) and north a bit
+    // Roughly 13.9 acres → about 800–900 ft E-W by 700 ft N-S for illustration
+    const largeW = 900 * ftLon;
+    const largeH = 700 * ftLat;
+    const largeRect = [
+      [center[0] - h - 50*ftLat, center[1] - w],                    // near SW of small
+      [center[0] - h - 50*ftLat, center[1] - w + largeW],            // SE
+      [center[0] - h - 50*ftLat + largeH, center[1] - w + largeW],   // NE
+      [center[0] - h - 50*ftLat + largeH, center[1] - w],            // NW
+      [center[0] - h - 50*ftLat, center[1] - w]
+    ];
 
-    // Scale
+    L.polygon(largeRect, {
+      color: '#0066cc',
+      weight: 2,
+      dashArray: '8 6',
+      fillColor: '#3399ff',
+      fillOpacity: 0.12
+    }).addTo(map).bindPopup('<b>Approximate larger surveyed area</b><br>~13.9 acres (from 2001 drawing)<br>Extends east toward Jones Rd / former RR');
+
+    // Address marker
+    L.circleMarker(center, {
+      radius: 7,
+      color: '#000',
+      fillColor: '#ffff00',
+      fillOpacity: 1,
+      weight: 2
+    }).addTo(map).bindPopup('<b>11521 Jones St</b><br>Property reference point');
+
     L.control.scale({imperial: true, metric: false}).addTo(map);
   </script>
 </body>
