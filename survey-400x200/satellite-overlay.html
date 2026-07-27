@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Survey Lines Overlay — 11521 Jones St</title>
+  <title>Survey Overlay — West ¼ Corner Control</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -11,77 +11,57 @@
     html, body { height: 100%; font-family: system-ui, -apple-system, sans-serif; }
     #map { height: 100%; width: 100%; }
     .panel {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      z-index: 1000;
-      background: rgba(255,255,255,0.96);
-      padding: 10px 14px;
-      border-radius: 8px;
-      box-shadow: 0 2px 14px rgba(0,0,0,0.3);
-      font-size: 13px;
-      line-height: 1.4;
-      max-width: 340px;
+      position: absolute; top: 8px; left: 8px; z-index: 1000;
+      background: rgba(255,255,255,0.96); padding: 10px 14px;
+      border-radius: 8px; box-shadow: 0 2px 14px rgba(0,0,0,0.3);
+      font-size: 13px; line-height: 1.4; max-width: 360px;
     }
     .panel h1 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
     .panel .sub { color: #444; font-size: 11.5px; }
     .disclaimer {
-      position: absolute;
-      bottom: 8px;
-      left: 8px;
-      right: 8px;
-      z-index: 1000;
-      background: rgba(254,243,199,0.97);
-      border: 1px solid #b45309;
-      padding: 8px 11px;
-      border-radius: 6px;
-      font-size: 11px;
-      color: #78350f;
-      max-width: 480px;
+      position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 1000;
+      background: rgba(254,243,199,0.97); border: 1px solid #b45309;
+      padding: 8px 11px; border-radius: 6px; font-size: 11px;
+      color: #78350f; max-width: 520px;
     }
     .legend {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      z-index: 1000;
-      background: rgba(255,255,255,0.96);
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      box-shadow: 0 1px 8px rgba(0,0,0,0.2);
+      position: absolute; top: 8px; right: 8px; z-index: 1000;
+      background: rgba(255,255,255,0.96); padding: 8px 12px;
+      border-radius: 6px; font-size: 12px; box-shadow: 0 1px 8px rgba(0,0,0,0.2);
     }
-    .legend div { margin-bottom: 3px; }
+    .legend div { margin-bottom: 4px; }
     .legend span { display: inline-block; width: 16px; height: 4px; margin-right: 6px; vertical-align: middle; }
   </style>
 </head>
 <body>
   <div class="panel">
-    <h1>400′ × 200′ Survey Overlay</h1>
+    <h1>Survey Overlay (West ¼ Corner Control)</h1>
     <div class="sub">
-      11521 Jones St, Carleton, MI 48117<br>
-      Reconstruction from 2001 Andrus survey (01S-9894)<br>
-      Blue = your 400×200 rectangle (SW corner feature)<br>
-      Red dashed = larger ~13.9-ac parcel context
+      User pin ≈ West ¼ Corner of Section 20<br>
+      42.0427438° N, 83.3943237° W<br>
+      Blue = 400′ × 200′ rectangle (SW corner feature of the larger parcel)<br>
+      Red dashed = schematic larger ~13.9-ac tract
     </div>
   </div>
 
   <div id="map"></div>
 
   <div class="legend">
+    <div><span style="background:#047857; height:10px; width:10px; border-radius:50%;"></span> West ¼ Corner (your pin)</div>
     <div><span style="background:#1d4ed8"></span> 400′ × 200′ (SET pins)</div>
     <div><span style="background:#b91c1c; height:2px;"></span> Larger parcel (schematic)</div>
   </div>
 
   <div class="disclaimer">
-    <strong>Still approximate.</strong> The 400×200 is sized correctly and placed at the address. Relative position to the larger parcel follows the survey (small rectangle = SW corner). Imagery shifts and lack of 2001 GPS mean the lines will not land exactly on the iron pins. Use this as a starting visual only — recover the actual pins for true lot lines.
+    <strong>Improved using your pin.</strong> The West ¼ Corner is locked to the coordinates from your Google Maps pin. The 400×200 is placed immediately east of it as the SW corner feature of the larger parcel (matching the 2001 survey description). Still approximate — imagery shifts and exact 2001 distances from the corner may differ by a few meters. Use as a visual guide only.
   </div>
 
   <script>
-    const addr = [42.0446873, -83.3894082];
+    const wqc = [42.0427438, -83.3943237];
 
     const map = L.map('map', {
-      center: addr,
-      zoom: 18,
+      center: [42.0433, -83.3925],
+      zoom: 17,
       maxZoom: 20
     });
 
@@ -91,42 +71,51 @@
     }).addTo(map);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19,
-      opacity: 0.65
+      maxZoom: 19, opacity: 0.6
     }).addTo(map);
 
     const ftPerDegLat = 364000;
     const ftPerDegLon = 270000;
 
+    L.circleMarker(wqc, {
+      radius: 9,
+      color: '#047857',
+      weight: 3,
+      fillColor: '#10b981',
+      fillOpacity: 0.9
+    }).addTo(map).bindPopup('<b>West ¼ Corner (your pin)</b><br>Section 20, T5S R9E<br>Primary control for the 2001 survey');
+
+    const offsetE = 80 / ftPerDegLon;
+    const offsetN = 20 / ftPerDegLat;
+
     const halfW = (400 / 2) / ftPerDegLon;
     const halfH = (200 / 2) / ftPerDegLat;
 
+    const plotSW = [wqc[0] + offsetN - halfH, wqc[1] + offsetE];
     const plotCoords = [
-      [addr[0] - halfH, addr[1] - halfW],
-      [addr[0] - halfH, addr[1] + halfW],
-      [addr[0] + halfH, addr[1] + halfW],
-      [addr[0] + halfH, addr[1] - halfW]
+      plotSW,
+      [plotSW[0], plotSW[1] + 400/ftPerDegLon],
+      [plotSW[0] + 200/ftPerDegLat, plotSW[1] + 400/ftPerDegLon],
+      [plotSW[0] + 200/ftPerDegLat, plotSW[1]]
     ];
 
     const plot = L.polygon(plotCoords, {
       color: '#1d4ed8',
       weight: 3.5,
       fillColor: '#3b82f6',
-      fillOpacity: 0.28
+      fillOpacity: 0.30
     }).addTo(map);
 
-    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>All four corners = SET ⅝″ iron pins (2001)');
+    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>All four corners = SET ⅝″ iron pins (March 2001)<br>SW corner feature of the larger tract');
 
-    // Larger parcel with SW corner coinciding with the 400x200 SW corner
-    const largeW = 1100 / ftPerDegLon;
-    const largeH = 550 / ftPerDegLat;
+    const largeW = 1200 / ftPerDegLon;
+    const largeH = 500 / ftPerDegLat;
 
-    const largeSW = plotCoords[0];
     const largeCoords = [
-      largeSW,
-      [largeSW[0], largeSW[1] + largeW],
-      [largeSW[0] + largeH, largeSW[1] + largeW],
-      [largeSW[0] + largeH, largeSW[1]]
+      plotCoords[0],
+      [plotCoords[0][0], plotCoords[0][1] + largeW],
+      [plotCoords[0][0] + largeH, plotCoords[0][1] + largeW],
+      [plotCoords[0][0] + largeH, plotCoords[0][1]]
     ];
 
     const larger = L.polygon(largeCoords, {
@@ -134,23 +123,14 @@
       weight: 2.5,
       dashArray: '8 5',
       fillColor: '#ef4444',
-      fillOpacity: 0.07
+      fillOpacity: 0.08
     }).addTo(map);
 
-    larger.bindPopup('Schematic of the larger 13.906-acre parcel<br>(400×200 sits in its SW corner per the 2001 drawing)');
+    larger.bindPopup('Schematic of the larger 13.906-acre parcel<br>400×200 sits in its southwest corner per the 2001 drawing');
 
+    const addr = [42.0446873, -83.3894082];
     L.marker(addr).addTo(map)
-      .bindPopup('<b>11521 Jones St</b>')
-      .openPopup();
-
-    const wqc = [addr[0] - halfH - 0.00015, addr[1] - halfW - 0.0004];
-    L.circleMarker(wqc, {
-      radius: 7,
-      color: '#047857',
-      weight: 2,
-      fillColor: '#10b981',
-      fillOpacity: 0.8
-    }).addTo(map).bindPopup('<b>West ¼ Corner (approx)</b><br>Section 20 — primary control point<br>LCRC Liber 1, pp. 245-246');
+      .bindPopup('<b>11521 Jones St</b> (geocoded address)');
 
     L.control.scale({ imperial: true, metric: false }).addTo(map);
   </script>
