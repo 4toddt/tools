@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Survey Overlay – 11521 Jones St | 400×200 Rectangle</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #map { height: 100vh; width: 100%; }
+    .info {
+      position: absolute; top: 10px; left: 10px; z-index: 1000;
+      background: rgba(255,255,255,0.95); padding: 12px 16px;
+      border-radius: 8px; max-width: 320px; font-size: 13px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+    .info h1 { margin: 0 0 6px; font-size: 15px; }
+    .disclaimer { font-size: 11px; color: #555; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h1>400′ × 200′ Rectangle Overlay</h1>
+    <div>11521 Jones St, Carleton, MI 48117</div>
+    <div>Job 01S-9894 · Andrus 2001 Survey</div>
+    <div class="disclaimer">
+      <strong>Approximate placement</strong> based on address + survey dimensions + Jones Rd / RR cues. Imagery years shift 1–5 m. Use for field reference only. Recover West ¼ Corner + metal detect the pins for true location.
+    </div>
+  </div>
+  <div id="map"></div>
+  <script>
+    // Approximate center near 11521 Jones St (Carleton area)
+    // Refined from nearby Jones St parcels and Ash Twp geography
+    const center = [42.0525, -83.3875];
+
+    const map = L.map('map').setView(center, 17);
+
+    // Satellite basemap (Esri World Imagery)
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      attribution: 'Tiles &copy; Esri',
+      maxZoom: 19
+    }).addTo(map);
+
+    // Optional labels overlay
+    L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19, opacity: 0.7
+    }).addTo(map);
+
+    // Approximate 400 ft E-W × 200 ft N-S rectangle
+    // 1 degree lat ≈ 364000 ft, 1 degree lon ≈ 270000 ft at this latitude
+    // 400 ft ≈ 0.00110 deg lon, 200 ft ≈ 0.00055 deg lat
+    const halfW = 0.00055; // ~200 ft half width in lon
+    const halfH = 0.000275; // ~100 ft half height in lat
+
+    // Positioned west of Jones St as the survey shows the rectangle in the SW corner of the NW 1/4 near the West 1/4 Corner
+    const rectCoords = [
+      [center[0] - halfH, center[1] - halfW * 2], // SW
+      [center[0] - halfH, center[1] ],           // SE
+      [center[0] + halfH, center[1] ],           // NE
+      [center[0] + halfH, center[1] - halfW * 2], // NW
+      [center[0] - halfH, center[1] - halfW * 2]
+    ];
+
+    const rect = L.polygon(rectCoords, {
+      color: '#ff0000',
+      weight: 3,
+      fillColor: '#ff6666',
+      fillOpacity: 0.35
+    }).addTo(map).bindPopup('<b>Approximate 400′ × 200′ Rectangle</b><br>≈ 1.84 acres<br>All corners SET ⅝″ iron pins w/ caps (2001)');
+
+    // Marker for the address
+    L.marker(center).addTo(map)
+      .bindPopup('<b>11521 Jones St</b><br>Your property reference');
+
+    // Scale
+    L.control.scale({imperial: true, metric: false}).addTo(map);
+  </script>
+</body>
+</html>
