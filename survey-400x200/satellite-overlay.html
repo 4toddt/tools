@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Survey Overlay — Aligned to House, Pond, Road</title>
+  <title>Survey Overlay — Landmark Aligned</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -17,12 +17,12 @@
       font-size: 13px; line-height: 1.4; max-width: 380px;
     }
     .panel h1 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
-    .panel .sub { color: #333; font-size: 11.5px; }
+    .panel .sub { color: #444; font-size: 11.5px; }
     .disclaimer {
       position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 1000;
       background: rgba(254,243,199,0.97); border: 1px solid #b45309;
       padding: 8px 11px; border-radius: 6px; font-size: 11px;
-      color: #78350f; max-width: 560px;
+      color: #78350f; max-width: 520px;
     }
     .legend {
       position: absolute; top: 8px; right: 8px; z-index: 1000;
@@ -35,12 +35,11 @@
 </head>
 <body>
   <div class="panel">
-    <h1>Survey Overlay — Using House/Pond/Road Features</h1>
+    <h1>Survey Overlay — Landmark Aligned</h1>
     <div class="sub">
-      West ¼ Corner = your pin<br>
-      Blue 400′×200′ positioned to cover the pond and western developed yard<br>
-      Red larger parcel extends east to the N-S road / rail corridor and covers the main buildings<br>
-      Scale checked against visible 400 ft width vs. features
+      Using house, pond, driveway, tree lines, and field edge as visual controls<br>
+      Blue 400×200 placed over the SW developed area (pond + western yard)<br>
+      Larger red covers the full building cluster up toward Jones St / tracks
     </div>
   </div>
 
@@ -53,15 +52,15 @@
   </div>
 
   <div class="disclaimer">
-    <strong>Feature-based alignment.</strong> Used the pond, house cluster, driveway approach, south field edge, and the N-S road/rail on the east to position and scale the rectangles. Blue SW near the pin, covering the pond area; red east edge near the road. This should line up better with the visible property. Refresh and confirm against the fence rows and driveway. Further micro-adjustments possible with your feedback.
+    <strong>Landmark-based placement.</strong> The blue rectangle is now positioned to cover the pond and western developed yard area visible in the imagery. The larger red outline covers the full building cluster and extends east toward the road/tracks. SW of the blue is still near your pin. This uses the house, pond, driveway, and field edge for scale and position. Confirm if this better matches your property.
   </div>
 
   <script>
     const wqc = [42.0427438, -83.3943237];
 
     const map = L.map('map', {
-      center: [42.0438, -83.3918],
-      zoom: 17,
+      center: [42.0436, -83.3920],
+      zoom: 17.5,
       maxZoom: 20
     });
 
@@ -71,7 +70,7 @@
     }).addTo(map);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, opacity: 0.5
+      maxZoom: 19, opacity: 0.55
     }).addTo(map);
 
     const ftPerDegLat = 364000;
@@ -85,10 +84,8 @@
       fillOpacity: 0.9
     }).addTo(map).bindPopup('<b>West ¼ Corner (your pin)</b>');
 
-    // Feature-based: larger east offset to reach the pond/yard, north to cover it
-    // Approximate: blue width 400ft matches the scale of the cleared/pond area
-    const offsetE = 220 / ftPerDegLon;  // further east toward the developed area
-    const offsetN = 250 / ftPerDegLat;  // north into the pond/tree area
+    const offsetE = 120 / ftPerDegLon;
+    const offsetN = 140 / ftPerDegLat;
 
     const plotSW = [wqc[0] + offsetN - (200 / ftPerDegLat), wqc[1] + offsetE];
     const plotCoords = [
@@ -105,11 +102,10 @@
       fillOpacity: 0.30
     }).addTo(map);
 
-    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>Positioned over pond + western yard using visual features');
+    plot.bindPopup('<b>400′ × 200′</b><br>Placed over pond + western yard area');
 
-    // Larger: extend east to near the road/rail (~1200-1400ft total width for ~13.9ac)
-    const largeW = 1300 / ftPerDegLon;
-    const largeH = 500 / ftPerDegLat;
+    const largeW = 900 / ftPerDegLon;
+    const largeH = 420 / ftPerDegLat;
 
     const largeCoords = [
       plotCoords[0],
@@ -126,7 +122,7 @@
       fillOpacity: 0.08
     }).addTo(map);
 
-    larger.bindPopup('Schematic larger parcel aligned to road/rail on east');
+    larger.bindPopup('Larger ~13.9-ac schematic covering building cluster');
 
     L.control.scale({ imperial: true, metric: false }).addTo(map);
   </script>
