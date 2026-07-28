@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Survey Overlay — Aligned to Fence/Tree Rows</title>
+  <title>Survey Overlay — Shifted to Yard/Structures</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -14,7 +14,7 @@
       position: absolute; top: 8px; left: 8px; z-index: 1000;
       background: rgba(255,255,255,0.96); padding: 10px 14px;
       border-radius: 8px; box-shadow: 0 2px 14px rgba(0,0,0,0.3);
-      font-size: 13px; line-height: 1.4; max-width: 360px;
+      font-size: 13px; line-height: 1.4; max-width: 380px;
     }
     .panel h1 { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
     .panel .sub { color: #444; font-size: 11.5px; }
@@ -35,12 +35,11 @@
 </head>
 <body>
   <div class="panel">
-    <h1>Survey Overlay — Visual Alignment</h1>
+    <h1>Survey Overlay — Shifted North to Yard</h1>
     <div class="sub">
-      West ¼ Corner locked to your pin<br>
-      42.0427438° N, 83.3943237° W<br>
-      Blue 400×200 adjusted to better match visible field edge / tree line<br>
-      South edge follows open-field boundary; north edge near denser vegetation
+      West ¼ Corner locked to your pin (42.0427438° N, 83.3943237° W)<br>
+      400×200 moved further north to cover the yard / pond / near-structures area<br>
+      SW corner still near the pin; red larger parcel treats blue as its SW corner
     </div>
   </div>
 
@@ -53,14 +52,14 @@
   </div>
 
   <div class="disclaimer">
-    <strong>Visual iteration.</strong> SW corner of the blue rectangle is kept near your pin. Position nudged so the south edge follows the clear field boundary and the north edge sits closer to the denser tree line visible in imagery. Still approximate — true pin locations require field recovery.
+    <strong>Further visual iteration from your latest screenshots.</strong> The 400×200 has been shifted significantly north so it now overlaps the developed yard, pond, and area near the structures instead of sitting mainly on the open field. SW corner remains near your pin. Still an approximation — imagery shifts and exact 2001 distances mean the true iron pins may be a few meters off. Use only as a visual guide until the pins are recovered.
   </div>
 
   <script>
     const wqc = [42.0427438, -83.3943237];
 
     const map = L.map('map', {
-      center: [42.0431, -83.3928],
+      center: [42.0436, -83.3925],
       zoom: 17.5,
       maxZoom: 20
     });
@@ -85,12 +84,10 @@
       fillOpacity: 0.9
     }).addTo(map).bindPopup('<b>West ¼ Corner (your pin)</b><br>Section 20, T5S R9E');
 
-    // Visual adjustment based on screenshot:
-    // - SW close to pin
-    // - South edge on open-field transition
-    // - North edge nudged toward denser vegetation/tree line
-    const offsetE = 45 / ftPerDegLon;
-    const offsetN = 55 / ftPerDegLat;
+    // Larger north offset to move the rectangle over the yard/pond/structures area
+    // visible in the latest screenshots
+    const offsetE = 40 / ftPerDegLon;
+    const offsetN = 180 / ftPerDegLat;   // significantly further north
 
     const plotSW = [wqc[0] + offsetN - (200 / ftPerDegLat), wqc[1] + offsetE];
     const plotCoords = [
@@ -104,13 +101,13 @@
       color: '#1d4ed8',
       weight: 3.5,
       fillColor: '#3b82f6',
-      fillOpacity: 0.28
+      fillOpacity: 0.30
     }).addTo(map);
 
-    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>SET pins at four corners (2001)<br>Aligned to visible field edge + tree line');
+    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>SET pins at four corners (2001)<br>Shifted north to cover yard/structures area');
 
     const largeW = 1150 / ftPerDegLon;
-    const largeH = 480 / ftPerDegLat;
+    const largeH = 500 / ftPerDegLat;
 
     const largeCoords = [
       plotCoords[0],
@@ -127,7 +124,7 @@
       fillOpacity: 0.07
     }).addTo(map);
 
-    larger.bindPopup('Schematic larger 13.9-ac parcel<br>(400×200 = SW corner feature)');
+    larger.bindPopup('Schematic larger 13.9-ac parcel<br>(400×200 remains its SW corner)');
 
     L.control.scale({ imperial: true, metric: false }).addTo(map);
   </script>
