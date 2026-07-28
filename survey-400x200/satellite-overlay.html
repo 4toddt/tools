@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-  <title>Survey Overlay — West ¼ Corner Control</title>
+  <title>Survey Overlay — Aligned to Fence/Tree Rows</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
@@ -35,12 +35,12 @@
 </head>
 <body>
   <div class="panel">
-    <h1>Survey Overlay (West ¼ Corner Control)</h1>
+    <h1>Survey Overlay — Visual Alignment</h1>
     <div class="sub">
-      User pin ≈ West ¼ Corner of Section 20<br>
+      West ¼ Corner locked to your pin<br>
       42.0427438° N, 83.3943237° W<br>
-      Blue = 400′ × 200′ rectangle (SW corner feature of the larger parcel)<br>
-      Red dashed = schematic larger ~13.9-ac tract
+      Blue 400×200 adjusted to better match visible field edge / tree line<br>
+      South edge follows open-field boundary; north edge near denser vegetation
     </div>
   </div>
 
@@ -53,15 +53,15 @@
   </div>
 
   <div class="disclaimer">
-    <strong>Improved using your pin.</strong> The West ¼ Corner is locked to the coordinates from your Google Maps pin. The 400×200 is placed immediately east of it as the SW corner feature of the larger parcel (matching the 2001 survey description). Still approximate — imagery shifts and exact 2001 distances from the corner may differ by a few meters. Use as a visual guide only.
+    <strong>Visual iteration.</strong> SW corner of the blue rectangle is kept near your pin. Position nudged so the south edge follows the clear field boundary and the north edge sits closer to the denser tree line visible in imagery. Still approximate — true pin locations require field recovery.
   </div>
 
   <script>
     const wqc = [42.0427438, -83.3943237];
 
     const map = L.map('map', {
-      center: [42.0433, -83.3925],
-      zoom: 17,
+      center: [42.0431, -83.3928],
+      zoom: 17.5,
       maxZoom: 20
     });
 
@@ -71,7 +71,7 @@
     }).addTo(map);
 
     L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
-      maxZoom: 19, opacity: 0.6
+      maxZoom: 19, opacity: 0.55
     }).addTo(map);
 
     const ftPerDegLat = 364000;
@@ -83,33 +83,34 @@
       weight: 3,
       fillColor: '#10b981',
       fillOpacity: 0.9
-    }).addTo(map).bindPopup('<b>West ¼ Corner (your pin)</b><br>Section 20, T5S R9E<br>Primary control for the 2001 survey');
+    }).addTo(map).bindPopup('<b>West ¼ Corner (your pin)</b><br>Section 20, T5S R9E');
 
-    const offsetE = 80 / ftPerDegLon;
-    const offsetN = 20 / ftPerDegLat;
+    // Visual adjustment based on screenshot:
+    // - SW close to pin
+    // - South edge on open-field transition
+    // - North edge nudged toward denser vegetation/tree line
+    const offsetE = 45 / ftPerDegLon;
+    const offsetN = 55 / ftPerDegLat;
 
-    const halfW = (400 / 2) / ftPerDegLon;
-    const halfH = (200 / 2) / ftPerDegLat;
-
-    const plotSW = [wqc[0] + offsetN - halfH, wqc[1] + offsetE];
+    const plotSW = [wqc[0] + offsetN - (200 / ftPerDegLat), wqc[1] + offsetE];
     const plotCoords = [
       plotSW,
-      [plotSW[0], plotSW[1] + 400/ftPerDegLon],
-      [plotSW[0] + 200/ftPerDegLat, plotSW[1] + 400/ftPerDegLon],
-      [plotSW[0] + 200/ftPerDegLat, plotSW[1]]
+      [plotSW[0], plotSW[1] + 400 / ftPerDegLon],
+      [plotSW[0] + 200 / ftPerDegLat, plotSW[1] + 400 / ftPerDegLon],
+      [plotSW[0] + 200 / ftPerDegLat, plotSW[1]]
     ];
 
     const plot = L.polygon(plotCoords, {
       color: '#1d4ed8',
       weight: 3.5,
       fillColor: '#3b82f6',
-      fillOpacity: 0.30
+      fillOpacity: 0.28
     }).addTo(map);
 
-    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>All four corners = SET ⅝″ iron pins (March 2001)<br>SW corner feature of the larger tract');
+    plot.bindPopup('<b>Your 400′ × 200′ parcel</b><br>≈ 1.84 acres<br>SET pins at four corners (2001)<br>Aligned to visible field edge + tree line');
 
-    const largeW = 1200 / ftPerDegLon;
-    const largeH = 500 / ftPerDegLat;
+    const largeW = 1150 / ftPerDegLon;
+    const largeH = 480 / ftPerDegLat;
 
     const largeCoords = [
       plotCoords[0],
@@ -123,14 +124,10 @@
       weight: 2.5,
       dashArray: '8 5',
       fillColor: '#ef4444',
-      fillOpacity: 0.08
+      fillOpacity: 0.07
     }).addTo(map);
 
-    larger.bindPopup('Schematic of the larger 13.906-acre parcel<br>400×200 sits in its southwest corner per the 2001 drawing');
-
-    const addr = [42.0446873, -83.3894082];
-    L.marker(addr).addTo(map)
-      .bindPopup('<b>11521 Jones St</b> (geocoded address)');
+    larger.bindPopup('Schematic larger 13.9-ac parcel<br>(400×200 = SW corner feature)');
 
     L.control.scale({ imperial: true, metric: false }).addTo(map);
   </script>
