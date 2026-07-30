@@ -46,7 +46,7 @@ Companion to [bcc-field-inventory.md](bcc-field-inventory.md). For each column c
 
 - **Inventory:** Feed=no · Idx=yes.
 - **Search / CDP:** CDP / recently viewed use record attribute **`onSale`** (e.g. [cdp/resultsListGrid.jsp](atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cdp/resultsListGrid.jsp), [cartridges/RecentlyViewedProducts/RecentlyViewedProducts.jsp](atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/cartridges/RecentlyViewedProducts/RecentlyViewedProducts.jsp)) for sale badges—key name may differ from `sku.onSale` depending on assembler mapping.
-- **Renders:** Sectional / simple PDP paths expose JSON or markup with an `onSale` flag derived from `hasSalePrice` (e.g. [browse/pdp/sectional_pdp_price.jsp](atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/browse/pdp/sectional_pdp_price.jsp)).
+- **Renders:** Sectional / simple PDP paths expose JSON or markup with an `onSale` flag derived from `hasSalePrice` (e.g. [pdp/sectional_pdp_price.jsp](atg/la-z-boy/modules/LB/Storefront/j2ee/store.war/pdp/sectional_pdp_price.jsp)).
 
 ### `wholesalePrice`
 

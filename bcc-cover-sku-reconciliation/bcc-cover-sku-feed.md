@@ -107,7 +107,7 @@ From `LZBProductFeedService`: merchandising uses pending/active/discontinued sty
 
 ## 6. Code references
 
-```1252:1323:atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/LZBCatalogTools.java
+```1251:1323:atg/la-z-boy/modules/LB/Commerce/src/com/lzb/commerce/catalog/LZBCatalogTools.java
 	public boolean setCoverSkuPropertiesFromTokens(String[] pKeys, String[] pValues, MutableRepositoryItem pCoverSkuItem) throws RepositoryException {
 		// ... maps keys through getCoverFileSrcDestMap(), restrictedCoverPropertiesToUpdate,
 		// performanceFabricFlag handling, colordescription → displayName, status overwrite guard ...
