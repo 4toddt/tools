@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<title>Hammary casegood review</title>
+<meta name="description" content="Review Hammary casegood import records: images, field deltas, and copy.">
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #ffffff;
+    --border: #E6E2D5;
+    --border-soft: #EEEAE0;
+    --ink: #1a1a1a;
+    --ink-soft: #404040;
+    --muted: #757575;
+    --muted-soft: #B0B0B0;
+    --accent: #003349;
+    --hot: #BD472A;
+    --hot-soft: #F7E3DE;
+    --ok: #1f6b3a;
+    --ok-soft: #e5f6eb;
+    --ok-edge: #9ed4b0;
+    --warn: #8a6d1d;
+    --warn-soft: #f8f1d8;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: var(--accent); }
+  button, input, select { font: inherit; }
+
+  .chrome {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(245, 243, 238, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1rem .85rem;
+  }
+  .chrome-inner { max-width: 1100px; margin: 0 auto; }
+  .chrome h1 {
+    margin: 0 0 .15rem;
+    font-size: 1.05rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    color: var(--accent);
+  }
+  .chrome .meta {
+    color: var(--muted);
+    font-size: .8rem;
+    margin-bottom: .65rem;
+  }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem .55rem;
+    align-items: center;
+  }
+  .filters input[type="search"] {
+    min-width: 12rem;
+    flex: 1 1 12rem;
+    padding: .4rem .6rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+  .filters select {
+    padding: .4rem .55rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+  .filters label.check {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    color: var(--ink-soft);
+    font-size: .88rem;
+    user-select: none;
+    white-space: nowrap;
+  }
+  .count {
+    margin-left: auto;
+    color: var(--muted);
+    font-size: .82rem;
+    white-space: nowrap;
+  }
+  .filter-hint {
+    width: 100%;
+    font-size: .75rem;
+    color: var(--muted);
+    margin-top: .15rem;
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 1rem 1rem 4rem;
+  }
+  .pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .75rem;
+    margin: .25rem 0 1rem;
+    color: var(--muted);
+    font-size: .85rem;
+  }
+  .pager button {
+    padding: .35rem .7rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--surface);
+    cursor: pointer;
+  }
+  .pager button:disabled { opacity: .45; cursor: default; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    scroll-margin-top: 8rem;
+  }
+  .card-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem .75rem;
+    align-items: baseline;
+    padding: .75rem 1rem;
+    border-bottom: 1px solid var(--border-soft);
+    background: #fafaf7;
+  }
+  .card-head h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+  }
+  .sku {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .82rem;
+    color: var(--muted);
+  }
+  .badge {
+    display: inline-block;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    padding: .15rem .45rem;
+    border-radius: 999px;
+    border: 1px solid transparent;
+  }
+  .badge.new { background: #e8f0fe; color: #1a4b8c; border-color: #b6cdf5; }
+  .badge.update { background: var(--ok-soft); color: var(--ok); border-color: var(--ok-edge); }
+  .badge.live { background: #eee; color: var(--muted); border-color: #ddd; }
+  .badge.offline { background: #eee; color: var(--muted); border-color: #ddd; }
+  .badge.copy-new { background: var(--warn-soft); color: var(--warn); border-color: #e6d59a; }
+
+  .delta-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    width: 100%;
+  }
+  .delta-chip {
+    font-size: .72rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    background: var(--ok-soft);
+    color: var(--ok);
+    border: 1px solid var(--ok-edge);
+    border-radius: 4px;
+    padding: .12rem .4rem;
+  }
+  .delta-chip.added { background: #e8f0fe; color: #1a4b8c; border-color: #b6cdf5; }
+
+  .card-body {
+    display: grid;
+    grid-template-columns: minmax(200px, 280px) 1fr;
+    gap: 0;
+  }
+  .card.copy-focus .card-body {
+    grid-template-columns: minmax(180px, 240px) 1fr;
+  }
+  @media (max-width: 780px) {
+    .card-body { grid-template-columns: 1fr; }
+  }
+
+  .gallery {
+    padding: .85rem;
+    border-right: 1px solid var(--border-soft);
+    background: #fbfbf9;
+  }
+  @media (max-width: 780px) {
+    .gallery { border-right: 0; border-bottom: 1px solid var(--border-soft); }
+  }
+  .hero {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .hero img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .hero .ph {
+    color: var(--muted-soft);
+    font-size: .85rem;
+    padding: 1rem;
+    text-align: center;
+  }
+  .thumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .35rem;
+    margin-top: .55rem;
+  }
+  .thumbs button {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .thumbs button.active { border-color: var(--accent); }
+  .thumbs button img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+
+  .detail { padding: .85rem 1rem 1rem; min-width: 0; }
+
+  .section-label {
+    font-size: .72rem;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: .15rem 0 .4rem;
+  }
+  .fields {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: .8rem;
+    margin-bottom: .85rem;
+  }
+  .fields th,
+  .fields td {
+    text-align: left;
+    padding: .28rem .4rem;
+    border-bottom: 1px solid var(--border-soft);
+    vertical-align: top;
+  }
+  .fields th {
+    width: 11.5rem;
+    color: var(--muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+  .fields td {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: .78rem;
+    word-break: break-word;
+    color: var(--ink-soft);
+  }
+  .fields tr:last-child th,
+  .fields tr:last-child td { border-bottom: 0; }
+
+  /* green highlight for changed / new values */
+  .fields tr.delta-row th {
+    color: var(--ok);
+    font-weight: 650;
+  }
+  .fields tr.delta-row td {
+    background: var(--ok-soft);
+    color: var(--ok);
+    border-radius: 0;
+  }
+  .fields tr.delta-row td .was {
+    display: block;
+    font-size: .72rem;
+    color: var(--muted);
+    font-weight: 400;
+    margin-top: .15rem;
+  }
+  .fields tr.delta-row td .was s {
+    color: #a05050;
+  }
+
+  .copy-block {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: .55rem;
+    overflow: hidden;
+  }
+  .copy-block.news {
+    border-color: var(--ok-edge);
+  }
+  .copy-block header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    padding: .35rem .6rem;
+    background: #f7f5f0;
+    border-bottom: 1px solid var(--border-soft);
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--ink-soft);
+  }
+  .copy-block.news header {
+    background: var(--ok-soft);
+    color: var(--ok);
+  }
+  .copy-block .pane {
+    padding: .65rem .75rem;
+    font-size: .9rem;
+    line-height: 1.5;
+  }
+  .copy-block .pane.empty {
+    color: var(--muted-soft);
+    font-style: italic;
+    font-size: .85rem;
+  }
+  .copy-block .pane p { margin: 0 0 .5em; }
+  .copy-block .pane p:last-child { margin-bottom: 0; }
+  .copy-block .pane ul { margin: 0; padding-left: 1.15rem; }
+  .copy-block .pane li { margin: .15rem 0; }
+
+  .side-by-side {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media (max-width: 700px) {
+    .side-by-side { grid-template-columns: 1fr; }
+  }
+  .side-by-side .col { border-right: 1px solid var(--border-soft); }
+  .side-by-side .col:last-child { border-right: 0; }
+  .side-by-side .col-label {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: .3rem .65rem 0;
+  }
+  .col.before-col { background: #fbf8f4; }
+  .col.after-col { background: var(--ok-soft); }
+
+  .diff-pane {
+    padding: .65rem .75rem;
+    font-size: .9rem;
+    line-height: 1.55;
+  }
+  .diff-pane del {
+    background: #fde2e2;
+    color: #7a1f1f;
+    text-decoration: line-through;
+    border-radius: 2px;
+  }
+  .diff-pane ins {
+    background: #cfeedd;
+    color: #1f5a36;
+    text-decoration: none;
+    border-radius: 2px;
+  }
+
+  .notes {
+    margin-top: .5rem;
+    font-size: .78rem;
+    color: var(--muted);
+  }
+  .notes strong { color: var(--ink-soft); }
+  .blockers {
+    margin-top: .35rem;
+    color: var(--hot);
+    font-size: .8rem;
+  }
+  .empty-state {
+    text-align: center;
+    color: var(--muted);
+    padding: 3rem 1rem;
+  }
+  .load-err {
+    background: var(--hot-soft);
+    border: 1px solid #edb8ab;
+    color: var(--hot);
+    padding: .75rem 1rem;
+    border-radius: 8px;
+    margin: 1rem 0;
+  }
+  .no-delta-note {
+    font-size: .82rem;
+    color: var(--muted);
+    margin: 0 0 .75rem;
+    padding: .5rem .65rem;
+    background: #f7f5f0;
+    border-radius: 6px;
+  }
+</style>
+</head>
+<body>
+  <div class="chrome">
+    <div class="chrome-inner">
+      <h1>Hammary casegood review</h1>
+      <div class="meta" id="metaLine">Loading…</div>
+      <div class="filters">
+        <input type="search" id="q" placeholder="Search SKU, name, series…" autocomplete="off">
+        <select id="kind" title="Product set">
+          <option value="all">All products</option>
+          <option value="new">New (create)</option>
+          <option value="update">Live — has changes</option>
+          <option value="live">Live — no changes</option>
+          <option value="inBcc">All live (in BCC)</option>
+        </select>
+        <select id="online" title="showOnline">
+          <option value="all">showOnline: all</option>
+          <option value="true">showOnline: true</option>
+          <option value="false">showOnline: false</option>
+        </select>
+        <label class="check"><input type="checkbox" id="newCopy"> New copy</label>
+        <select id="pageSize" title="Page size">
+          <option value="12">12 / page</option>
+          <option value="25" selected>25 / page</option>
+          <option value="50">50 / page</option>
+          <option value="100">100 / page</option>
+          <option value="0">All</option>
+        </select>
+        <span class="count" id="countLine"></span>
+        <div class="filter-hint" id="filterHint"></div>
+      </div>
+    </div>
+  </div>
+
+  <main>
+    <div id="err" class="load-err" hidden></div>
+    <div class="pager" id="pager" hidden>
+      <button type="button" id="prevBtn">← Prev</button>
+      <span id="pageInfo"></span>
+      <button type="button" id="nextBtn">Next →</button>
+    </div>
+    <div id="list"></div>
+    <div id="empty" class="empty-state" hidden>No products match these filters.</div>
+  </main>
+
+  <script src="data.js"></script>
+  <script>
+(function () {
+  const FIELD_ORDER = [
+    'product.ID', 'product.displayName', 'product.childSKUs', 'product.categoryIds',
+    'product.3DRoomPlanner', 'product.willFitMyRoom',
+    'sku.ID', 'styleNumber', 'stylePrefix', 'styleSuffix', 'vendorID',
+    'namePrefix', 'nameSuffix',
+    'showOnline', 'isPurchaseable', 'unsearchable', 'status',
+    'exteriorWidth', 'exteriorDepth', 'exteriorHeight',
+    'cdpDefaultImage', 'cdpMouseOverImage', 'altImages', 'wtbLeftImg',
+    'shortDescription', 'features', 'bundleLinks',
+  ];
+
+  const COPY_FIELDS = [
+    { key: 'romanceCopy', label: 'Romance' },
+    { key: 'longDescription', label: 'Long description' },
+    { key: 'atAGlanceContent', label: 'At a glance' },
+    { key: 'useCareInstructions', label: 'Use & care' },
+    { key: 'resources', label: 'Resources' },
+  ];
+
+  const COPY_NEWS_KEYS = ['romanceCopy', 'longDescription', 'atAGlanceContent'];
+
+  const state = {
+    data: null,
+    kind: 'all',
+    online: 'all',
+    q: '',
+    newCopy: false,
+    page: 0,
+    pageSize: 25,
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const listEl = $('list');
+  const emptyEl = $('empty');
+  const errEl = $('err');
+  const pagerEl = $('pager');
+
+  function esc(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function isTruthy(v) {
+    return v === true || v === 'true' || v === 'True' || v === 1 || v === '1';
+  }
+
+  function isFalsyOnline(v) {
+    return v === false || v === 'false' || v === 'False' || v === 0 || v === '0';
+  }
+
+  function kindOf(p) {
+    return p.kind || p.mode || 'new';
+  }
+
+  function hasCopyNews(p) {
+    const c = p.copy || {};
+    // Live product: wording changed or copy newly added on update
+    const liveNews = COPY_NEWS_KEYS.some((k) => c[k] && (c[k].changed || c[k].added));
+    if (liveNews) return true;
+    // Create with any merch copy
+    if (kindOf(p) === 'new') {
+      return COPY_NEWS_KEYS.some((k) => c[k] && String(c[k].after || '').trim());
+    }
+    return false;
+  }
+
+  function deltaList(p) {
+    const d = p.deltas || {};
+    return Object.keys(d);
+  }
+
+  function filtered() {
+    const products = state.data.products;
+    const q = state.q.trim().toLowerCase();
+    return products.filter((p) => {
+      const k = kindOf(p);
+      if (state.kind === 'new' && k !== 'new') return false;
+      if (state.kind === 'update' && k !== 'update') return false;
+      if (state.kind === 'live' && k !== 'live') return false;
+      if (state.kind === 'inBcc' && !(p.inBcc || k === 'update' || k === 'live')) return false;
+
+      if (state.online === 'true' && !isTruthy(p.fields.showOnline)) return false;
+      if (state.online === 'false' && !isFalsyOnline(p.fields.showOnline) && isTruthy(p.fields.showOnline)) return false;
+      if (state.online === 'false' && isTruthy(p.fields.showOnline)) return false;
+
+      if (state.newCopy && !hasCopyNews(p)) return false;
+
+      if (!q) return true;
+      const hay = [
+        p.sku,
+        p.displayName,
+        p.series,
+        p.fields && p.fields['product.categoryIds'],
+        p.fields && p.fields.namePrefix,
+        p.fields && p.fields.nameSuffix,
+        deltaList(p).join(' '),
+      ].join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
+  function pageSlice(items) {
+    if (!state.pageSize) return { pageItems: items, pages: 1, start: 0 };
+    const pages = Math.max(1, Math.ceil(items.length / state.pageSize));
+    if (state.page >= pages) state.page = pages - 1;
+    if (state.page < 0) state.page = 0;
+    const start = state.page * state.pageSize;
+    return { pageItems: items.slice(start, start + state.pageSize), pages, start };
+  }
+
+  function galleryHtml(p) {
+    const imgs = [];
+    if (p.images && p.images.primary) imgs.push(p.images.primary);
+    (p.images && p.images.alts || []).forEach((u) => {
+      if (u && !imgs.includes(u)) imgs.push(u);
+    });
+    const first = imgs[0] || '';
+    const hero = first
+      ? `<img class="hero-img" src="${esc(first)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+      : `<div class="ph">No image</div>`;
+    const thumbs = imgs.map((u, i) =>
+      `<button type="button" class="thumb${i === 0 ? ' active' : ''}" data-src="${esc(u)}" title="Image ${i + 1}">
+        <img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">
+      </button>`
+    ).join('');
+    return `
+      <div class="gallery">
+        <div class="hero">${hero}</div>
+        ${thumbs ? `<div class="thumbs">${thumbs}</div>` : ''}
+      </div>`;
+  }
+
+  function fieldsHtml(p) {
+    const deltaMap = p.deltaFieldKeys || {};
+    // also map from deltas for display names
+    const deltas = p.deltas || {};
+    const rows = FIELD_ORDER.map((k) => {
+      let v = p.fields[k];
+      if (v == null || v === '') v = '—';
+      else if (typeof v === 'boolean') v = v ? 'true' : 'false';
+
+      const d = deltaMap[k] || (deltas[k] ? deltas[k] : null);
+      if (d) {
+        const was = d.before === '' || d.before == null
+          ? '<span class="was">(was empty)</span>'
+          : `<span class="was">was: <s>${esc(String(d.before).length > 80 ? String(d.before).slice(0, 80) + '…' : d.before)}</s></span>`;
+        return `<tr class="delta-row" title="Changed vs live BCC">
+          <th>${esc(k)} · ${d.kind === 'added' ? 'new' : 'changed'}</th>
+          <td>${esc(v)}${was}</td>
+        </tr>`;
+      }
+      return `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`;
+    }).join('');
+
+    const nDelta = Object.keys(deltas).length;
+    const note = kindOf(p) === 'live'
+      ? `<p class="no-delta-note">In BCC with <strong>no field deltas</strong> vs existing export — nothing green to highlight.</p>`
+      : (kindOf(p) === 'update'
+        ? `<p class="no-delta-note"><strong>${nDelta}</strong> field(s) differ from live BCC (green rows). Most common: image filename + dimensions.</p>`
+        : '');
+
+    return `
+      <div class="section-label">Import fields</div>
+      ${note}
+      <table class="fields">${rows}</table>`;
+  }
+
+  function stripHtml(html) {
+    if (!html) return '';
+    const d = document.createElement('div');
+    d.innerHTML = html;
+    return (d.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  function renderHtmlPane(html) {
+    if (!html || !String(html).trim()) {
+      return `<div class="pane empty">(empty)</div>`;
+    }
+    return `<div class="pane">${html}</div>`;
+  }
+
+  function wordDiffHtml(beforeText, afterText) {
+    const a = beforeText ? beforeText.split(/(\s+)/) : [];
+    const b = afterText ? afterText.split(/(\s+)/) : [];
+    const n = a.length, m = b.length;
+    const dp = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+    for (let i = n - 1; i >= 0; i--) {
+      for (let j = m - 1; j >= 0; j--) {
+        if (a[i] === b[j]) dp[i][j] = dp[i + 1][j + 1] + 1;
+        else dp[i][j] = Math.max(dp[i + 1][j], dp[i][j + 1]);
+      }
+    }
+    let i = 0, j = 0, html = '';
+    while (i < n && j < m) {
+      if (a[i] === b[j]) { html += esc(a[i]); i++; j++; }
+      else if (dp[i + 1][j] >= dp[i][j + 1]) {
+        html += a[i].trim() ? `<del>${esc(a[i])}</del>` : esc(a[i]);
+        i++;
+      } else {
+        html += b[j].trim() ? `<ins>${esc(b[j])}</ins>` : esc(b[j]);
+        j++;
+      }
+    }
+    while (i < n) { html += a[i].trim() ? `<del>${esc(a[i])}</del>` : esc(a[i]); i++; }
+    while (j < m) { html += b[j].trim() ? `<ins>${esc(b[j])}</ins>` : esc(b[j]); j++; }
+    return html || '<span class="empty">(empty)</span>';
+  }
+
+  function copyBlockHtml(p, field) {
+    const entry = (p.copy && p.copy[field.key]) || {};
+    const after = entry.after || '';
+    const before = entry.before || '';
+    const changed = !!entry.changed;
+    const added = !!entry.added;
+    const isCreateCopy = kindOf(p) === 'new' && !!String(after).trim() && COPY_NEWS_KEYS.includes(field.key);
+
+    // No before/after chrome unless real wording change
+    if (!changed && !added) {
+      if (!String(after).trim()) {
+        return `
+          <div class="copy-block">
+            <header><span>${esc(field.label)}</span></header>
+            ${renderHtmlPane('')}
+          </div>`;
+      }
+      return `
+        <div class="copy-block${isCreateCopy && state.newCopy ? ' news' : ''}">
+          <header>
+            <span>${esc(field.label)}${isCreateCopy && state.newCopy ? ' <span class="badge copy-new">new</span>' : ''}</span>
+          </header>
+          ${renderHtmlPane(after)}
+        </div>`;
+    }
+
+    if (added && !changed) {
+      return `
+        <div class="copy-block news">
+          <header>
+            <span>${esc(field.label)} <span class="badge copy-new">added</span></span>
+          </header>
+          ${renderHtmlPane(after)}
+        </div>`;
+    }
+
+    // Wording changed — full before/after + diff
+    const diff = wordDiffHtml(stripHtml(before), stripHtml(after));
+    return `
+      <div class="copy-block news">
+        <header>
+          <span>${esc(field.label)} <span class="badge copy-new">changed</span></span>
+        </header>
+        <div class="side-by-side">
+          <div class="col before-col">
+            <div class="col-label">Before (live)</div>
+            ${renderHtmlPane(before)}
+          </div>
+          <div class="col after-col">
+            <div class="col-label">After (import)</div>
+            ${renderHtmlPane(after)}
+          </div>
+        </div>
+        <div class="col-label" style="padding-top:.45rem">Diff</div>
+        <div class="diff-pane">${diff}</div>
+      </div>`;
+  }
+
+  function cardHtml(p) {
+    const k = kindOf(p);
+    const online = isTruthy(p.fields.showOnline);
+    const deltas = deltaList(p);
+    const copyNews = hasCopyNews(p);
+
+    const kindLabel = k === 'new' ? 'new' : k === 'update' ? 'update' : 'live';
+    const badges = [
+      `<span class="badge ${kindLabel}">${kindLabel === 'update' ? 'has changes' : kindLabel === 'live' ? 'no changes' : 'new'}</span>`,
+      online ? '' : `<span class="badge offline">offline</span>`,
+      copyNews && (k !== 'new' || state.newCopy) ? `<span class="badge copy-new">copy</span>` : '',
+    ].filter(Boolean).join(' ');
+
+    const chips = deltas.length
+      ? `<div class="delta-chips">${deltas.map((f) => {
+          const kind = (p.deltas[f] && p.deltas[f].kind) || 'changed';
+          return `<span class="delta-chip${kind === 'added' ? ' added' : ''}">${esc(f)}${kind === 'added' ? ' +' : ''}</span>`;
+        }).join('')}</div>`
+      : '';
+
+    const showFields = !state.newCopy;
+    const copyBlocks = COPY_FIELDS.map((f) => copyBlockHtml(p, f)).join('');
+
+    const notes = p.notes
+      ? `<div class="notes"><strong>Notes:</strong> ${esc(p.notes)}</div>`
+      : '';
+    const blockers = (p.blockers && p.blockers.length)
+      ? `<div class="blockers">Blockers: ${esc(p.blockers.join('; '))}</div>`
+      : '';
+
+    return `
+      <article class="card${state.newCopy ? ' copy-focus' : ''}" id="sku-${esc(p.sku)}" data-sku="${esc(p.sku)}">
+        <div class="card-head">
+          <h2>${esc(p.displayName || p.sku)}</h2>
+          <span class="sku">${esc(p.sku)}</span>
+          ${badges}
+          ${p.series ? `<span class="sku">${esc(p.series)}</span>` : ''}
+          ${chips}
+        </div>
+        <div class="card-body">
+          ${galleryHtml(p)}
+          <div class="detail">
+            ${showFields ? fieldsHtml(p) : ''}
+            <div class="section-label">Copy</div>
+            <div class="copy-area">${copyBlocks}</div>
+            ${notes}
+            ${blockers}
+          </div>
+        </div>
+      </article>`;
+  }
+
+  function updateHint() {
+    const m = state.data.meta;
+    const parts = [];
+    if (state.kind === 'update') {
+      parts.push(`${m.update} live products have field changes (green). Mostly image filename + dims — not copy rewrites.`);
+    } else if (state.kind === 'live') {
+      parts.push(`${m.live} live products match BCC on compared fields.`);
+    } else if (state.kind === 'new') {
+      parts.push(`${m.new} creates (not in BCC export).`);
+    }
+    if (state.newCopy) {
+      parts.push(`Copy focus: field table hidden. Wording changes needing before/after: ${m.copyWordingChanged}. Copy newly filled on live SKUs: ${m.copyAddedOnLive}.`);
+    }
+    $('filterHint').textContent = parts.join(' ');
+  }
+
+  function render() {
+    if (!state.data) return;
+    const items = filtered();
+    const { pageItems, pages, start } = pageSlice(items);
+
+    $('countLine').textContent = `${items.length} shown · p${state.page + 1}/${pages}`;
+    updateHint();
+
+    if (state.pageSize && pages > 1) {
+      pagerEl.hidden = false;
+      $('pageInfo').textContent = `${start + 1}–${start + pageItems.length} of ${items.length}`;
+      $('prevBtn').disabled = state.page <= 0;
+      $('nextBtn').disabled = state.page >= pages - 1;
+    } else {
+      pagerEl.hidden = true;
+    }
+
+    if (!pageItems.length) {
+      listEl.innerHTML = '';
+      emptyEl.hidden = false;
+      return;
+    }
+    emptyEl.hidden = true;
+    listEl.innerHTML = pageItems.map(cardHtml).join('');
+  }
+
+  function wireCardEvents() {
+    listEl.addEventListener('click', (e) => {
+      const thumb = e.target.closest('.thumb');
+      if (!thumb) return;
+      const gal = thumb.closest('.gallery');
+      const hero = gal.querySelector('.hero-img');
+      const src = thumb.getAttribute('data-src');
+      if (hero) hero.src = src;
+      gal.querySelectorAll('.thumb').forEach((t) => t.classList.toggle('active', t === thumb));
+    });
+  }
+
+  function setMeta() {
+    const m = state.data.meta;
+    $('metaLine').textContent =
+      `${m.total} products · ${m.new} new · ${m.update} live w/ changes · ${m.live} live unchanged · ` +
+      `${m.showOnline} showOnline · copy wording Δ ${m.copyWordingChanged} · copy added on live ${m.copyAddedOnLive} · ${m.generated}`;
+  }
+
+  function bindFilters() {
+    $('q').addEventListener('input', (e) => { state.q = e.target.value; state.page = 0; render(); });
+    $('kind').addEventListener('change', (e) => { state.kind = e.target.value; state.page = 0; render(); });
+    $('online').addEventListener('change', (e) => { state.online = e.target.value; state.page = 0; render(); });
+    $('newCopy').addEventListener('change', (e) => { state.newCopy = e.target.checked; state.page = 0; render(); });
+    $('pageSize').addEventListener('change', (e) => {
+      state.pageSize = parseInt(e.target.value, 10) || 0;
+      state.page = 0;
+      render();
+    });
+    $('prevBtn').addEventListener('click', () => {
+      state.page -= 1; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+    $('nextBtn').addEventListener('click', () => {
+      state.page += 1; render(); window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  }
+
+  async function loadData() {
+    if (window.CASEGOOD_REVIEW_DATA) return window.CASEGOOD_REVIEW_DATA;
+    const res = await fetch('data.json', { cache: 'no-store' });
+    if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
+    return res.json();
+  }
+
+  async function init() {
+    bindFilters();
+    wireCardEvents();
+    try {
+      state.data = await loadData();
+      setMeta();
+      const params = new URLSearchParams(location.search);
+      if (params.get('sku')) { state.q = params.get('sku'); $('q').value = state.q; }
+      if (params.get('kind')) { state.kind = params.get('kind'); $('kind').value = state.kind; }
+      // legacy ?mode=
+      if (params.get('mode') === 'update') { state.kind = 'update'; $('kind').value = 'update'; }
+      if (params.get('mode') === 'create' || params.get('mode') === 'new') { state.kind = 'new'; $('kind').value = 'new'; }
+      if (params.get('online') === '1' || params.get('online') === 'true') {
+        state.online = 'true'; $('online').value = 'true';
+      }
+      if (params.get('online') === '0' || params.get('online') === 'false') {
+        state.online = 'false'; $('online').value = 'false';
+      }
+      if (params.get('newCopy') === '1') { state.newCopy = true; $('newCopy').checked = true; }
+      render();
+      if (params.get('sku')) {
+        requestAnimationFrame(() => {
+          const el = document.getElementById('sku-' + params.get('sku'));
+          if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+      }
+    } catch (e) {
+      errEl.hidden = false;
+      errEl.textContent = 'Could not load product data. ' + e.message;
+    }
+  }
+
+  init();
+})();
+  </script>
+</body>
+</html>

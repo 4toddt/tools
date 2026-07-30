@@ -16,6 +16,17 @@ self-contained `index.html`.
 ### fiscal/
 La-Z-Boy 5-4-4 (NRF retail) fiscal calendar viewer.
 
+### casegood-review/
+Hammary casegood import reviewer. Static `index.html` + `data.js`/`data.json`
+(614 products). Filters: updates/creates, showOnline, copy-changed. Cards show
+CDN image + alt thumbs, import field table, and rendered romance/long/glance
+with before (live BCC) / after (import) toggle.
+
+Regenerate data from the monorepo:
+`docs/projects/casegood-loading` → run the export snippet in
+`casegood-review/README.md` (or the project’s round2 merge) so
+`tools/casegood-review/data.js` stays current before publishing Pages.
+
 ### cover-data/
 XLSX → JSON extractor for the Cover Information List spreadsheet.
 Vanilla JS + SheetJS Community 0.18.5 (jsdelivr CDN, SRI-pinned).
