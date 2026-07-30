@@ -311,6 +311,35 @@
     color: #a05050;
   }
 
+  /* offline reason under showOnline: false */
+  .fields tr.offline-row td {
+    vertical-align: top;
+  }
+  .offline-reasons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .3rem;
+    margin-top: .35rem;
+  }
+  .offline-reasons .why {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: .72rem;
+    font-weight: 600;
+    letter-spacing: .01em;
+    color: #6b3a12;
+    background: #f6ebe0;
+    border: 1px solid #e5c9a8;
+    border-radius: 999px;
+    padding: .12rem .5rem;
+  }
+  .offline-reasons .why-label {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: .7rem;
+    color: var(--muted);
+    width: 100%;
+    margin: 0 0 .05rem;
+  }
+
   .copy-block {
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -443,7 +472,9 @@
           <option value="true">showOnline: true</option>
           <option value="false">showOnline: false</option>
         </select>
-        <label class="check"><input type="checkbox" id="newCopy"> New copy</label>
+        <label class="check" title="Only products with new or changed merch copy. Hides the field table and any copy that did not change.">
+          <input type="checkbox" id="newCopy"> Copy-only view
+        </label>
         <select id="pageSize" title="Page size">
           <option value="12">12 / page</option>
           <option value="25" selected>25 / page</option>
@@ -451,7 +482,7 @@
           <option value="100">100 / page</option>
           <option value="0">All</option>
         </select>
-        <span class="count" id="countLine"></span>
+        <span class="count" id="countLine" aria-live="polite"></span>
         <div class="filter-hint" id="filterHint"></div>
       </div>
     </div>
@@ -576,12 +607,26 @@
   }
 
   function pageSlice(items) {
-    if (!state.pageSize) return { pageItems: items, pages: 1, start: 0 };
-    const pages = Math.max(1, Math.ceil(items.length / state.pageSize));
+    // Coerce in case select value was left as a string
+    const size = Number(state.pageSize) || 0;
+    if (!size) return { pageItems: items, pages: 1, start: 0, size };
+    const pages = Math.max(1, Math.ceil(items.length / size));
     if (state.page >= pages) state.page = pages - 1;
     if (state.page < 0) state.page = 0;
-    const start = state.page * state.pageSize;
-    return { pageItems: items.slice(start, start + state.pageSize), pages, start };
+    const start = state.page * size;
+    return { pageItems: items.slice(start, start + size), pages, start, size };
+  }
+
+  /** Always-fresh range for the chrome + pager, e.g. "1–25 of 128". */
+  function rangeText(total, start, pageCount, size) {
+    if (!total) return '0 of 0';
+    if (!size || total <= pageCount) {
+      // Single page / "All"
+      return pageCount ? `1–${pageCount} of ${total}` : `0 of ${total}`;
+    }
+    const from = start + 1;
+    const to = start + pageCount;
+    return `${from}–${to} of ${total}`;
   }
 
   function galleryHtml(p) {
@@ -610,22 +655,30 @@
     const deltaMap = p.deltaFieldKeys || {};
     // also map from deltas for display names
     const deltas = p.deltas || {};
+    const offlineReasons = p.offlineReasons || [];
     const rows = FIELD_ORDER.map((k) => {
       let v = p.fields[k];
       if (v == null || v === '') v = '—';
       else if (typeof v === 'boolean') v = v ? 'true' : 'false';
 
       const d = deltaMap[k] || (deltas[k] ? deltas[k] : null);
+      let extra = '';
+      if (k === 'showOnline' && !isTruthy(p.fields.showOnline) && offlineReasons.length) {
+        extra = `<div class="offline-reasons">
+          <div class="why-label">Why it’s offline</div>
+          ${offlineReasons.map((r) => `<span class="why">${esc(r)}</span>`).join('')}
+        </div>`;
+      }
       if (d) {
         const was = d.before === '' || d.before == null
           ? '<span class="was">(was empty)</span>'
           : `<span class="was">was: <s>${esc(String(d.before).length > 80 ? String(d.before).slice(0, 80) + '…' : d.before)}</s></span>`;
-        return `<tr class="delta-row" title="Changed vs live BCC">
+        return `<tr class="delta-row${extra ? ' offline-row' : ''}" title="Changed vs live BCC">
           <th>${esc(k)} · ${d.kind === 'added' ? 'new' : 'changed'}</th>
-          <td>${esc(v)}${was}</td>
+          <td>${esc(v)}${was}${extra}</td>
         </tr>`;
       }
-      return `<tr><th>${esc(k)}</th><td>${esc(v)}</td></tr>`;
+      return `<tr class="${extra ? 'offline-row' : ''}"><th>${esc(k)}</th><td>${esc(v)}${extra}</td></tr>`;
     }).join('');
 
     const nDelta = Object.keys(deltas).length;
@@ -682,6 +735,19 @@
     return html || '<span class="empty">(empty)</span>';
   }
 
+  function isNewCopyField(p, field, entry) {
+    const after = (entry && entry.after) || '';
+    const changed = !!(entry && entry.changed);
+    const added = !!(entry && entry.added);
+    // Live: only wording changes or newly filled fields
+    if (changed || added) return true;
+    // Create: merch copy that has content counts as "new"
+    if (kindOf(p) === 'new' && COPY_NEWS_KEYS.includes(field.key) && String(after).trim()) {
+      return true;
+    }
+    return false;
+  }
+
   function copyBlockHtml(p, field) {
     const entry = (p.copy && p.copy[field.key]) || {};
     const after = entry.after || '';
@@ -689,6 +755,11 @@
     const changed = !!entry.changed;
     const added = !!entry.added;
     const isCreateCopy = kindOf(p) === 'new' && !!String(after).trim() && COPY_NEWS_KEYS.includes(field.key);
+
+    // New-copy mode: hide unchanged fields entirely (same idea as hiding the field table)
+    if (state.newCopy && !isNewCopyField(p, field, entry)) {
+      return '';
+    }
 
     // No before/after chrome unless real wording change
     if (!changed && !added) {
@@ -762,13 +833,16 @@
 
     const showFields = !state.newCopy;
     const copyBlocks = COPY_FIELDS.map((f) => copyBlockHtml(p, f)).join('');
+    const hasCopyBlocks = !!copyBlocks.trim();
 
-    const notes = p.notes
+    // In new-copy focus, skip notes/blockers/delta chips noise — image + new copy only
+    const notes = (!state.newCopy && p.notes)
       ? `<div class="notes"><strong>Notes:</strong> ${esc(p.notes)}</div>`
       : '';
-    const blockers = (p.blockers && p.blockers.length)
+    const blockers = (!state.newCopy && p.blockers && p.blockers.length)
       ? `<div class="blockers">Blockers: ${esc(p.blockers.join('; '))}</div>`
       : '';
+    const showChips = !state.newCopy && chips;
 
     return `
       <article class="card${state.newCopy ? ' copy-focus' : ''}" id="sku-${esc(p.sku)}" data-sku="${esc(p.sku)}">
@@ -777,14 +851,13 @@
           <span class="sku">${esc(p.sku)}</span>
           ${badges}
           ${p.series ? `<span class="sku">${esc(p.series)}</span>` : ''}
-          ${chips}
+          ${showChips || ''}
         </div>
         <div class="card-body">
           ${galleryHtml(p)}
           <div class="detail">
             ${showFields ? fieldsHtml(p) : ''}
-            <div class="section-label">Copy</div>
-            <div class="copy-area">${copyBlocks}</div>
+            ${hasCopyBlocks ? `<div class="section-label">${state.newCopy ? 'New / updated copy' : 'Copy'}</div><div class="copy-area">${copyBlocks}</div>` : ''}
             ${notes}
             ${blockers}
           </div>
@@ -803,7 +876,7 @@
       parts.push(`${m.new} creates (not in BCC export).`);
     }
     if (state.newCopy) {
-      parts.push(`Copy focus: field table hidden. Wording changes needing before/after: ${m.copyWordingChanged}. Copy newly filled on live SKUs: ${m.copyAddedOnLive}.`);
+      parts.push(`Copy-only view: products with new/changed merch copy only; field table and unchanged copy blocks hidden. Wording Δ: ${m.copyWordingChanged}. Added on live: ${m.copyAddedOnLive}.`);
     }
     $('filterHint').textContent = parts.join(' ');
   }
@@ -811,18 +884,23 @@
   function render() {
     if (!state.data) return;
     const items = filtered();
-    const { pageItems, pages, start } = pageSlice(items);
+    const { pageItems, pages, start, size } = pageSlice(items);
+    const range = rangeText(items.length, start, pageItems.length, size);
 
-    $('countLine').textContent = `${items.length} shown · p${state.page + 1}/${pages}`;
+    // Sticky chrome always shows the live range for current filters / page size
+    const pageBit = pages > 1 ? ` · page ${state.page + 1} of ${pages}` : '';
+    $('countLine').textContent = range + pageBit;
     updateHint();
 
-    if (state.pageSize && pages > 1) {
+    // Pager mirrors the same range (hidden when everything fits one page)
+    if (size && pages > 1) {
       pagerEl.hidden = false;
-      $('pageInfo').textContent = `${start + 1}–${start + pageItems.length} of ${items.length}`;
+      $('pageInfo').textContent = range;
       $('prevBtn').disabled = state.page <= 0;
       $('nextBtn').disabled = state.page >= pages - 1;
     } else {
       pagerEl.hidden = true;
+      $('pageInfo').textContent = range; // keep in sync even while hidden
     }
 
     if (!pageItems.length) {
@@ -854,12 +932,18 @@
   }
 
   function bindFilters() {
+    // Keep range in URL-ish sync not required; always re-read page size from the control
+    const syncPageSize = () => {
+      state.pageSize = parseInt($('pageSize').value, 10) || 0;
+    };
+    syncPageSize();
+
     $('q').addEventListener('input', (e) => { state.q = e.target.value; state.page = 0; render(); });
     $('kind').addEventListener('change', (e) => { state.kind = e.target.value; state.page = 0; render(); });
     $('online').addEventListener('change', (e) => { state.online = e.target.value; state.page = 0; render(); });
     $('newCopy').addEventListener('change', (e) => { state.newCopy = e.target.checked; state.page = 0; render(); });
-    $('pageSize').addEventListener('change', (e) => {
-      state.pageSize = parseInt(e.target.value, 10) || 0;
+    $('pageSize').addEventListener('change', () => {
+      syncPageSize();
       state.page = 0;
       render();
     });
@@ -896,7 +980,11 @@
       if (params.get('online') === '0' || params.get('online') === 'false') {
         state.online = 'false'; $('online').value = 'false';
       }
-      if (params.get('newCopy') === '1') { state.newCopy = true; $('newCopy').checked = true; }
+      // newCopy=1 or copyOnly=1
+      if (params.get('newCopy') === '1' || params.get('copyOnly') === '1') {
+        state.newCopy = true;
+        $('newCopy').checked = true;
+      }
       render();
       if (params.get('sku')) {
         requestAnimationFrame(() => {
