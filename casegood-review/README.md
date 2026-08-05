@@ -24,15 +24,15 @@ Static browser tool for reviewing Hammary casegood BCC import records.
 | View | **All fields** · **Copy** (new/changed merch only) · **Features** (image + feature context; live feature Δ or creates with tags) |
 | Product set | **All** · **New (create)** · **Live — has changes** · **Live — no changes** · **All live** |
 | showOnline | all / true / false |
-| **New copy** | Hides field table; products with create copy or live copy added/changed |
 | Page size | 12–100 or All |
 
-**Live — has changes** = in BCC export with at least one field delta (green).  
-**Live — no changes** = in BCC, compared fields match (should not look like an “update”).
+**Live — has changes** = in BCC with at least one field delta (green), **including features**.  
+**Live — no changes** = compared fields match live (incl. feature set).
 
-Green rows / chips: field value differs from existing BCC (`was: …`).
+Green rows / chips: field value differs from live BCC (`was: …`). Feature tags show green added / red removed.
 
-Deep links: `?sku=C11.0086.00BE`, `?kind=update&online=true`, `?newCopy=1`
+Deep links: `?sku=C11.0086.00BE`, `?kind=update&online=true`, `?view=features`, `?view=copy`  
+(Legacy `?newCopy=1` still maps to copy view.)
 
 ## Regenerate data
 
