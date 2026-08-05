@@ -332,6 +332,38 @@
   .fields tr.delta-row td .was s {
     color: #a05050;
   }
+  .feat-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .28rem;
+    margin-top: .15rem;
+  }
+  .feat-tag {
+    font-size: .72rem;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    padding: .12rem .4rem;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: #f7f5f0;
+    color: var(--ink-soft);
+  }
+  .feat-tag.added {
+    background: var(--ok-soft);
+    border-color: var(--ok-edge);
+    color: var(--ok);
+  }
+  .feat-tag.removed {
+    background: var(--hot-soft);
+    border-color: #e8b4a8;
+    color: var(--hot);
+    text-decoration: line-through;
+  }
+  .feat-tag.kept {
+    background: #f0f0ec;
+    color: var(--muted);
+  }
+  .card.features-focus .fields th { width: 9.5rem; }
+  .view-select { min-width: 9.5rem; }
 
   /* offline reason under showOnline: false */
   .fields tr.offline-row td {
@@ -494,9 +526,11 @@
           <option value="true">showOnline: true</option>
           <option value="false">showOnline: false</option>
         </select>
-        <label class="check" title="Only products with new or changed merch copy. Hides the field table and any copy that did not change.">
-          <input type="checkbox" id="newCopy"> Copy-only view
-        </label>
+        <select id="view" class="view-select" title="Card detail focus">
+          <option value="all">View: all fields</option>
+          <option value="copy">View: copy</option>
+          <option value="features">View: features</option>
+        </select>
         <select id="pageSize" title="Page size">
           <option value="12">12 / page</option>
           <option value="25" selected>25 / page</option>
@@ -545,12 +579,24 @@
 
   const COPY_NEWS_KEYS = ['romanceCopy', 'longDescription', 'atAGlanceContent'];
 
+  /** Fields shown in features-focused view (context + tags). */
+  const FEATURE_VIEW_FIELDS = [
+    'product.displayName',
+    'product.categoryIds',
+    'namePrefix',
+    'nameSuffix',
+    'exteriorWidth',
+    'exteriorDepth',
+    'exteriorHeight',
+    'features',
+  ];
+
   const state = {
     data: null,
     kind: 'all',
     online: 'all',
     q: '',
-    newCopy: false,
+    view: 'all', // all | copy | features
     page: 0,
     pageSize: 25,
   };
@@ -593,6 +639,12 @@
     return false;
   }
 
+  function hasFeatureNews(p) {
+    if (p.deltas && p.deltas.features) return true;
+    if (kindOf(p) === 'new' && String((p.fields && p.fields.features) || '').trim()) return true;
+    return false;
+  }
+
   function deltaList(p) {
     const d = p.deltas || {};
     return Object.keys(d);
@@ -612,7 +664,8 @@
       if (state.online === 'false' && !isFalsyOnline(p.fields.showOnline) && isTruthy(p.fields.showOnline)) return false;
       if (state.online === 'false' && isTruthy(p.fields.showOnline)) return false;
 
-      if (state.newCopy && !hasCopyNews(p)) return false;
+      if (state.view === 'copy' && !hasCopyNews(p)) return false;
+      if (state.view === 'features' && !hasFeatureNews(p)) return false;
 
       if (!q) return true;
       const hay = [
@@ -622,6 +675,7 @@
         p.fields && p.fields['product.categoryIds'],
         p.fields && p.fields.namePrefix,
         p.fields && p.fields.nameSuffix,
+        p.fields && p.fields.features,
         deltaList(p).join(' '),
       ].join(' ').toLowerCase();
       return hay.includes(q);
@@ -673,12 +727,36 @@
       </div>`;
   }
 
+  function featureTagsHtml(d, currentDisplay) {
+    // Rich delta: green added / red removed / muted kept
+    if (d && (d.addedTags || d.removedTags || d.afterList)) {
+      const added = new Set(d.addedTags || []);
+      const removed = new Set(d.removedTags || []);
+      const after = d.afterList || [];
+      const before = d.beforeList || [];
+      const kept = after.filter((t) => !added.has(t));
+      const parts = [];
+      kept.forEach((t) => parts.push(`<span class="feat-tag kept">${esc(t)}</span>`));
+      after.filter((t) => added.has(t)).forEach((t) => parts.push(`<span class="feat-tag added">+ ${esc(t)}</span>`));
+      before.filter((t) => removed.has(t)).forEach((t) => parts.push(`<span class="feat-tag removed">− ${esc(t)}</span>`));
+      if (!parts.length && currentDisplay) {
+        String(currentDisplay).split(',').map((s) => s.trim()).filter(Boolean)
+          .forEach((t) => parts.push(`<span class="feat-tag">${esc(t)}</span>`));
+      }
+      return parts.length ? `<div class="feat-tags">${parts.join('')}</div>` : '';
+    }
+    // No delta — simple chips
+    const tags = String(currentDisplay || '').split(',').map((s) => s.trim()).filter(Boolean);
+    if (!tags.length) return '';
+    return `<div class="feat-tags">${tags.map((t) => `<span class="feat-tag">${esc(t)}</span>`).join('')}</div>`;
+  }
+
   function fieldsHtml(p) {
     const deltaMap = p.deltaFieldKeys || {};
-    // also map from deltas for display names
     const deltas = p.deltas || {};
     const offlineReasons = p.offlineReasons || [];
-    const rows = FIELD_ORDER.map((k) => {
+    const order = state.view === 'features' ? FEATURE_VIEW_FIELDS : FIELD_ORDER;
+    const rows = order.map((k) => {
       let v = p.fields[k];
       if (v == null || v === '') v = '—';
       else if (typeof v === 'boolean') v = v ? 'true' : 'false';
@@ -691,6 +769,22 @@
           ${offlineReasons.map((r) => `<span class="why">${esc(r)}</span>`).join('')}
         </div>`;
       }
+
+      // Features: always show tag chips; delta chips when changed
+      if (k === 'features') {
+        const tags = featureTagsHtml(d, v === '—' ? '' : v);
+        if (d) {
+          const was = d.before === '' || d.before == null
+            ? '<span class="was">(was empty)</span>'
+            : `<span class="was">was: <s>${esc(String(d.before).length > 100 ? String(d.before).slice(0, 100) + '…' : d.before)}</s></span>`;
+          return `<tr class="delta-row" title="Features changed vs live BCC">
+            <th>features · ${d.kind === 'added' ? 'new' : d.kind === 'removed' ? 'cleared' : 'changed'}</th>
+            <td>${tags || esc(v)}${was}</td>
+          </tr>`;
+        }
+        return `<tr><th>features</th><td>${tags || esc(v)}</td></tr>`;
+      }
+
       if (d) {
         const was = d.before === '' || d.before == null
           ? '<span class="was">(was empty)</span>'
@@ -704,14 +798,21 @@
     }).join('');
 
     const nDelta = Object.keys(deltas).length;
-    const note = kindOf(p) === 'live'
-      ? `<p class="no-delta-note">In BCC with <strong>no field deltas</strong> vs existing export — nothing green to highlight.</p>`
-      : (kindOf(p) === 'update'
-        ? `<p class="no-delta-note"><strong>${nDelta}</strong> field(s) differ from live BCC (green rows). Most common: image filename + dimensions.</p>`
-        : '');
+    let note = '';
+    if (state.view === 'features') {
+      note = kindOf(p) === 'new'
+        ? `<p class="no-delta-note">Create — import feature tags (not yet in BCC).</p>`
+        : (deltas.features
+          ? `<p class="no-delta-note">Features differ from live BCC (green = added, red = removed).</p>`
+          : `<p class="no-delta-note">No feature delta vs live.</p>`);
+    } else if (kindOf(p) === 'live') {
+      note = `<p class="no-delta-note">In BCC with <strong>no field deltas</strong> vs live — nothing green to highlight.</p>`;
+    } else if (kindOf(p) === 'update') {
+      note = `<p class="no-delta-note"><strong>${nDelta}</strong> field(s) differ from live BCC (green rows), including features when tagged differently.</p>`;
+    }
 
     return `
-      <div class="section-label">Import fields</div>
+      <div class="section-label">${state.view === 'features' ? 'Feature context' : 'Import fields'}</div>
       ${note}
       <table class="fields">${rows}</table>`;
   }
@@ -778,8 +879,8 @@
     const added = !!entry.added;
     const isCreateCopy = kindOf(p) === 'new' && !!String(after).trim() && COPY_NEWS_KEYS.includes(field.key);
 
-    // New-copy mode: hide unchanged fields entirely (same idea as hiding the field table)
-    if (state.newCopy && !isNewCopyField(p, field, entry)) {
+    // Copy view: hide unchanged fields entirely
+    if (state.view === 'copy' && !isNewCopyField(p, field, entry)) {
       return '';
     }
 
@@ -793,9 +894,9 @@
           </div>`;
       }
       return `
-        <div class="copy-block${isCreateCopy && state.newCopy ? ' news' : ''}">
+        <div class="copy-block${isCreateCopy && state.view === 'copy' ? ' news' : ''}">
           <header>
-            <span>${esc(field.label)}${isCreateCopy && state.newCopy ? ' <span class="badge copy-new">new</span>' : ''}</span>
+            <span>${esc(field.label)}${isCreateCopy && state.view === 'copy' ? ' <span class="badge copy-new">new</span>' : ''}</span>
           </header>
           ${renderHtmlPane(after)}
         </div>`;
@@ -839,11 +940,15 @@
     const deltas = deltaList(p);
     const copyNews = hasCopyNews(p);
 
+    const featNews = hasFeatureNews(p);
     const kindLabel = k === 'new' ? 'new' : k === 'update' ? 'update' : 'live';
     const badges = [
       `<span class="badge ${kindLabel}">${kindLabel === 'update' ? 'has changes' : kindLabel === 'live' ? 'no changes' : 'new'}</span>`,
       online ? '' : `<span class="badge offline">offline</span>`,
-      copyNews && (k !== 'new' || state.newCopy) ? `<span class="badge copy-new">copy</span>` : '',
+      copyNews && (k !== 'new' || state.view === 'copy') ? `<span class="badge copy-new">copy</span>` : '',
+      featNews && (k !== 'new' || state.view === 'features') && p.deltas && p.deltas.features
+        ? `<span class="badge copy-new">features</span>`
+        : '',
     ].filter(Boolean).join(' ');
 
     const chips = deltas.length
@@ -853,21 +958,26 @@
         }).join('')}</div>`
       : '';
 
-    const showFields = !state.newCopy;
-    const copyBlocks = COPY_FIELDS.map((f) => copyBlockHtml(p, f)).join('');
+    const focus = state.view;
+    const showFields = focus !== 'copy';
+    const showCopy = focus !== 'features';
+    const copyBlocks = showCopy ? COPY_FIELDS.map((f) => copyBlockHtml(p, f)).join('') : '';
     const hasCopyBlocks = !!copyBlocks.trim();
 
-    // In new-copy focus, skip notes/blockers/delta chips noise — image + new copy only
-    const notes = (!state.newCopy && p.notes)
+    // Focused views: less chrome (notes/blockers)
+    const slim = focus === 'copy' || focus === 'features';
+    const notes = (!slim && p.notes)
       ? `<div class="notes"><strong>Notes:</strong> ${esc(p.notes)}</div>`
       : '';
-    const blockers = (!state.newCopy && p.blockers && p.blockers.length)
+    const blockers = (!slim && p.blockers && p.blockers.length)
       ? `<div class="blockers">Blockers: ${esc(p.blockers.join('; '))}</div>`
       : '';
-    const showChips = !state.newCopy && chips;
+    const showChips = focus === 'all' && chips;
+
+    const cardClass = focus === 'copy' ? ' copy-focus' : focus === 'features' ? ' features-focus' : '';
 
     return `
-      <article class="card${state.newCopy ? ' copy-focus' : ''}" id="sku-${esc(p.sku)}" data-sku="${esc(p.sku)}">
+      <article class="card${cardClass}" id="sku-${esc(p.sku)}" data-sku="${esc(p.sku)}">
         <div class="card-head">
           <h2>${esc(p.displayName || p.sku)}</h2>
           <span class="sku">${esc(p.sku)}</span>
@@ -879,7 +989,7 @@
           ${galleryHtml(p)}
           <div class="detail">
             ${showFields ? fieldsHtml(p) : ''}
-            ${hasCopyBlocks ? `<div class="section-label">${state.newCopy ? 'New / updated copy' : 'Copy'}</div><div class="copy-area">${copyBlocks}</div>` : ''}
+            ${hasCopyBlocks ? `<div class="section-label">${focus === 'copy' ? 'New / updated copy' : 'Copy'}</div><div class="copy-area">${copyBlocks}</div>` : ''}
             ${notes}
             ${blockers}
           </div>
@@ -891,14 +1001,16 @@
     const m = state.data.meta;
     const parts = [];
     if (state.kind === 'update') {
-      parts.push(`${m.update} live products have field changes (green). Mostly image filename + dims — not copy rewrites.`);
+      parts.push(`${m.update} live products have field changes (green), including features when tags differ from live.`);
     } else if (state.kind === 'live') {
-      parts.push(`${m.live} live products match BCC on compared fields.`);
+      parts.push(`${m.live} live products match BCC on compared fields (incl. features).`);
     } else if (state.kind === 'new') {
       parts.push(`${m.new} creates (not in BCC export).`);
     }
-    if (state.newCopy) {
-      parts.push(`Copy-only view: products with new/changed merch copy only; field table and unchanged copy blocks hidden. Wording Δ: ${m.copyWordingChanged}. Added on live: ${m.copyAddedOnLive}.`);
+    if (state.view === 'copy') {
+      parts.push(`Copy view: products with new/changed merch copy only; field table and unchanged copy hidden. Wording Δ: ${m.copyWordingChanged}.`);
+    } else if (state.view === 'features') {
+      parts.push(`Features view: products with feature tags to review (live Δ or create). Feature deltas: ${m.featureDeltas || 0}. Image + feature context only.`);
     }
     $('filterHint').textContent = parts.join(' ');
   }
@@ -950,7 +1062,7 @@
     const m = state.data.meta;
     $('metaLine').textContent =
       `${m.total} products · ${m.new} new · ${m.update} live w/ changes · ${m.live} live unchanged · ` +
-      `${m.showOnline} showOnline · copy wording Δ ${m.copyWordingChanged} · copy added on live ${m.copyAddedOnLive} · ${m.generated}`;
+      `${m.showOnline} showOnline · feature Δ ${m.featureDeltas || 0} · copy wording Δ ${m.copyWordingChanged} · ${m.generated}`;
   }
 
   function bindFilters() {
@@ -963,7 +1075,7 @@
     $('q').addEventListener('input', (e) => { state.q = e.target.value; state.page = 0; render(); });
     $('kind').addEventListener('change', (e) => { state.kind = e.target.value; state.page = 0; render(); });
     $('online').addEventListener('change', (e) => { state.online = e.target.value; state.page = 0; render(); });
-    $('newCopy').addEventListener('change', (e) => { state.newCopy = e.target.checked; state.page = 0; render(); });
+    $('view').addEventListener('change', (e) => { state.view = e.target.value; state.page = 0; render(); });
     $('pageSize').addEventListener('change', () => {
       syncPageSize();
       state.page = 0;
@@ -1002,10 +1114,14 @@
       if (params.get('online') === '0' || params.get('online') === 'false') {
         state.online = 'false'; $('online').value = 'false';
       }
-      // newCopy=1 or copyOnly=1
-      if (params.get('newCopy') === '1' || params.get('copyOnly') === '1') {
-        state.newCopy = true;
-        $('newCopy').checked = true;
+      // view=copy|features|all  (legacy: newCopy=1 / copyOnly=1 → copy)
+      const viewParam = params.get('view');
+      if (viewParam === 'copy' || viewParam === 'features' || viewParam === 'all') {
+        state.view = viewParam;
+        $('view').value = state.view;
+      } else if (params.get('newCopy') === '1' || params.get('copyOnly') === '1') {
+        state.view = 'copy';
+        $('view').value = 'copy';
       }
       render();
       if (params.get('sku')) {
