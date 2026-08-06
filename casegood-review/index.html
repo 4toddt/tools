@@ -332,11 +332,20 @@
   .fields tr.delta-row td .was s {
     color: #a05050;
   }
+  .feat-block { margin: 0; }
+  .feat-line-label {
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: .15rem 0 .2rem;
+  }
+  .feat-line-label.drop { color: var(--hot); margin-top: .45rem; }
   .feat-tags {
     display: flex;
     flex-wrap: wrap;
     gap: .28rem;
-    margin-top: .15rem;
   }
   .feat-tag {
     font-size: .72rem;
@@ -351,16 +360,28 @@
     background: var(--ok-soft);
     border-color: var(--ok-edge);
     color: var(--ok);
+    font-weight: 600;
   }
   .feat-tag.removed {
     background: var(--hot-soft);
     border-color: #e8b4a8;
     color: var(--hot);
-    text-decoration: line-through;
   }
-  .feat-tag.kept {
-    background: #f0f0ec;
+  .feat-empty {
+    font-size: .78rem;
     color: var(--muted);
+    font-style: italic;
+  }
+  .fields tr.feat-delta-row td {
+    /* keep green row but let nested labels stay readable */
+    padding-top: .45rem;
+    padding-bottom: .5rem;
+  }
+  .fields tr.feat-delta-row td .feat-line-label {
+    color: #5a7a62;
+  }
+  .fields tr.feat-delta-row td .feat-line-label.drop {
+    color: var(--hot);
   }
   .card.features-focus .fields th { width: 9.5rem; }
   .view-select { min-width: 9.5rem; }
@@ -728,27 +749,42 @@
   }
 
   function featureTagsHtml(d, currentDisplay) {
-    // Rich delta: green added / red removed / muted kept
-    if (d && (d.addedTags || d.removedTags || d.afterList)) {
+    /**
+     * Clearer than a single mixed chip row + "was: …":
+     *  1) Import — full set we will load (new tags marked + green)
+     *  2) Dropping from live — only tags present live that import removes
+     * No full-string "was:" line (that mixed kept Buried with struck-through Buried).
+     */
+    if (d && (d.addedTags || d.removedTags || d.afterList || d.beforeList)) {
       const added = new Set(d.addedTags || []);
-      const removed = new Set(d.removedTags || []);
       const after = d.afterList || [];
-      const before = d.beforeList || [];
-      const kept = after.filter((t) => !added.has(t));
-      const parts = [];
-      kept.forEach((t) => parts.push(`<span class="feat-tag kept">${esc(t)}</span>`));
-      after.filter((t) => added.has(t)).forEach((t) => parts.push(`<span class="feat-tag added">+ ${esc(t)}</span>`));
-      before.filter((t) => removed.has(t)).forEach((t) => parts.push(`<span class="feat-tag removed">− ${esc(t)}</span>`));
-      if (!parts.length && currentDisplay) {
-        String(currentDisplay).split(',').map((s) => s.trim()).filter(Boolean)
-          .forEach((t) => parts.push(`<span class="feat-tag">${esc(t)}</span>`));
+      const removed = d.removedTags || [];
+      const importChips = after.length
+        ? after.map((t) =>
+            added.has(t)
+              ? `<span class="feat-tag added" title="New vs live">+ ${esc(t)}</span>`
+              : `<span class="feat-tag" title="Unchanged vs live">${esc(t)}</span>`
+          ).join('')
+        : '<span class="feat-empty">(none on import)</span>';
+      let html = `<div class="feat-block">
+        <div class="feat-line-label">Import (load these)</div>
+        <div class="feat-tags">${importChips}</div>`;
+      if (removed.length) {
+        html += `<div class="feat-line-label drop">Dropping from live</div>
+        <div class="feat-tags">${removed.map((t) =>
+          `<span class="feat-tag removed" title="On live BCC; not on import">− ${esc(t)}</span>`
+        ).join('')}</div>`;
       }
-      return parts.length ? `<div class="feat-tags">${parts.join('')}</div>` : '';
+      html += `</div>`;
+      return html;
     }
-    // No delta — simple chips
+    // No delta — simple chips (creates, or live match)
     const tags = String(currentDisplay || '').split(',').map((s) => s.trim()).filter(Boolean);
-    if (!tags.length) return '';
-    return `<div class="feat-tags">${tags.map((t) => `<span class="feat-tag">${esc(t)}</span>`).join('')}</div>`;
+    if (!tags.length) return '<span class="feat-empty">(none)</span>';
+    return `<div class="feat-block">
+      <div class="feat-line-label">${/* label set by caller context */ ''}Import</div>
+      <div class="feat-tags">${tags.map((t) => `<span class="feat-tag">${esc(t)}</span>`).join('')}</div>
+    </div>`;
   }
 
   function fieldsHtml(p) {
@@ -770,19 +806,19 @@
         </div>`;
       }
 
-      // Features: always show tag chips; delta chips when changed
+      // Features: structured import vs drop chips (no struck-through "was:" dump)
       if (k === 'features') {
         const tags = featureTagsHtml(d, v === '—' ? '' : v);
         if (d) {
-          const was = d.before === '' || d.before == null
-            ? '<span class="was">(was empty)</span>'
-            : `<span class="was">was: <s>${esc(String(d.before).length > 100 ? String(d.before).slice(0, 100) + '…' : d.before)}</s></span>`;
-          return `<tr class="delta-row" title="Features changed vs live BCC">
-            <th>features · ${d.kind === 'added' ? 'new' : d.kind === 'removed' ? 'cleared' : 'changed'}</th>
-            <td>${tags || esc(v)}${was}</td>
+          const label = d.kind === 'added' ? 'features · new vs live'
+            : d.kind === 'removed' ? 'features · clearing live'
+            : 'features · changed vs live';
+          return `<tr class="delta-row feat-delta-row" title="Feature tags differ from live BCC">
+            <th>${label}</th>
+            <td>${tags}</td>
           </tr>`;
         }
-        return `<tr><th>features</th><td>${tags || esc(v)}</td></tr>`;
+        return `<tr><th>features</th><td>${tags}</td></tr>`;
       }
 
       if (d) {
@@ -801,10 +837,10 @@
     let note = '';
     if (state.view === 'features') {
       note = kindOf(p) === 'new'
-        ? `<p class="no-delta-note">Create — import feature tags (not yet in BCC).</p>`
+        ? `<p class="no-delta-note">Create — these tags will be new on import (not in BCC yet).</p>`
         : (deltas.features
-          ? `<p class="no-delta-note">Features differ from live BCC (green = added, red = removed).</p>`
-          : `<p class="no-delta-note">No feature delta vs live.</p>`);
+          ? `<p class="no-delta-note"><strong>Green +</strong> = new vs live · <strong>plain</strong> = already on live · <strong>red −</strong> = on live but we are not keeping (e.g. Buried).</p>`
+          : `<p class="no-delta-note">Feature set matches live BCC.</p>`);
     } else if (kindOf(p) === 'live') {
       note = `<p class="no-delta-note">In BCC with <strong>no field deltas</strong> vs live — nothing green to highlight.</p>`;
     } else if (kindOf(p) === 'update') {
