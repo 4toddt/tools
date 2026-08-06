@@ -1126,10 +1126,15 @@
   }
 
   async function loadData() {
+    // Prefer network data.json (no-store) so GitHub Pages / browser cache
+    // does not keep stale category & feature tags for hours.
+    // Fall back to embedded data.js for file:// or offline.
+    try {
+      const res = await fetch('data.json', { cache: 'no-store' });
+      if (res.ok) return await res.json();
+    } catch (_) { /* file:// or offline */ }
     if (window.CASEGOOD_REVIEW_DATA) return window.CASEGOOD_REVIEW_DATA;
-    const res = await fetch('data.json', { cache: 'no-store' });
-    if (!res.ok) throw new Error(`Failed to load data.json (${res.status})`);
-    return res.json();
+    throw new Error('Failed to load data.json and no embedded CASEGOOD_REVIEW_DATA');
   }
 
   async function init() {
