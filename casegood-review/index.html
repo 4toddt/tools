@@ -726,6 +726,22 @@
     return `${from}–${to} of ${total}`;
   }
 
+  /**
+   * Bust browser/CDN image cache when file content changes but the URL path does not
+   * (e.g. category ↔ alt byte swaps). Uses data.meta.generated so each export refreshes thumbs.
+   */
+  function cacheBust(url) {
+    if (!url) return url;
+    const gen =
+      (state.data && state.data.meta && state.data.meta.generated) ||
+      (window.CASEGOOD_REVIEW_DATA &&
+        window.CASEGOOD_REVIEW_DATA.meta &&
+        window.CASEGOOD_REVIEW_DATA.meta.generated) ||
+      '';
+    const v = String(gen).replace(/[^0-9TZ]/g, '') || String(Date.now());
+    return url + (url.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(v);
+  }
+
   function galleryHtml(p) {
     const imgs = [];
     if (p.images && p.images.primary) imgs.push(p.images.primary);
@@ -733,14 +749,16 @@
       if (u && !imgs.includes(u)) imgs.push(u);
     });
     const first = imgs[0] || '';
-    const hero = first
-      ? `<img class="hero-img" src="${esc(first)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
+    const firstB = first ? cacheBust(first) : '';
+    const hero = firstB
+      ? `<img class="hero-img" src="${esc(firstB)}" alt="" loading="lazy" referrerpolicy="no-referrer">`
       : `<div class="ph">No image</div>`;
-    const thumbs = imgs.map((u, i) =>
-      `<button type="button" class="thumb${i === 0 ? ' active' : ''}" data-src="${esc(u)}" title="Image ${i + 1}">
-        <img src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer">
-      </button>`
-    ).join('');
+    const thumbs = imgs.map((u, i) => {
+      const ub = cacheBust(u);
+      return `<button type="button" class="thumb${i === 0 ? ' active' : ''}" data-src="${esc(ub)}" title="Image ${i + 1}">
+        <img src="${esc(ub)}" alt="" loading="lazy" referrerpolicy="no-referrer">
+      </button>`;
+    }).join('');
     return `
       <div class="gallery">
         <div class="hero">${hero}</div>
