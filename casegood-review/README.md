@@ -21,7 +21,7 @@ Static browser tool for reviewing Hammary casegood BCC import records.
 | Control | Options / purpose |
 |---------|-------------------|
 | Search | SKU, name, series, category, features, delta field names |
-| View | **All fields** · **Copy** (new/changed merch only) · **Features** (image + feature context; live feature Δ or creates with tags) |
+| View | **All fields** · **Copy** (new/changed merch only) · **Features** (image + feature context; live feature Δ or creates with tags) · **Images** (2+ images only; gallery + image fields) |
 | Product set | **All** · **New (create)** · **Live — has changes** · **Live — no changes** · **All live** |
 | showOnline | all / true / false |
 | Page size | 12–100 or All |

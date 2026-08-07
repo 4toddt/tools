@@ -256,6 +256,48 @@
     gap: .35rem;
     margin-top: .55rem;
   }
+  .mouseover-panel {
+    margin-top: .65rem;
+    padding-top: .55rem;
+    border-top: 1px dashed var(--border);
+  }
+  .mouseover-panel .mo-label {
+    font-size: .72rem;
+    font-weight: 650;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: .35rem;
+  }
+  .mouseover-panel .mo-filename {
+    font-size: .78rem;
+    color: var(--ink-soft);
+    word-break: break-all;
+    margin-bottom: .4rem;
+  }
+  .mouseover-panel .mo-frame {
+    width: 100%;
+    max-width: 11rem;
+    aspect-ratio: 1;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .mouseover-panel .mo-frame img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .mouseover-panel .mo-empty {
+    font-size: .82rem;
+    color: var(--muted-soft);
+    font-style: italic;
+  }
   .thumbs button {
     width: 48px;
     height: 48px;
@@ -384,6 +426,15 @@
     color: var(--hot);
   }
   .card.features-focus .fields th { width: 9.5rem; }
+  .card.images-focus .card-body {
+    grid-template-columns: minmax(16rem, 1.15fr) minmax(14rem, 1fr);
+  }
+  .card.images-focus .gallery {
+    position: sticky;
+    top: 5.5rem;
+    align-self: start;
+  }
+  .card.images-focus .fields th { width: 10.5rem; }
   .view-select { min-width: 9.5rem; }
 
   /* offline reason under showOnline: false */
@@ -551,6 +602,7 @@
           <option value="all">View: all fields</option>
           <option value="copy">View: copy</option>
           <option value="features">View: features</option>
+          <option value="images">View: images</option>
         </select>
         <select id="pageSize" title="Page size">
           <option value="12">12 / page</option>
@@ -612,12 +664,23 @@
     'features',
   ];
 
+  /** Image review: identity + image-related import fields only. */
+  const IMAGE_VIEW_FIELDS = [
+    'product.displayName',
+    'product.categoryIds',
+    'cdpDefaultImage',
+    'cdpMouseOverImage',
+    'altImages',
+    'wtbLeftImg',
+    'showOnline',
+  ];
+
   const state = {
     data: null,
     kind: 'all',
     online: 'all',
     q: '',
-    view: 'all', // all | copy | features
+    view: 'all', // all | copy | features | images
     page: 0,
     pageSize: 25,
   };
@@ -666,6 +729,20 @@
     return false;
   }
 
+  /** Primary + any alts that are not the same URL → multi-image set for review. */
+  function imageList(p) {
+    const imgs = [];
+    if (p.images && p.images.primary) imgs.push(p.images.primary);
+    (p.images && p.images.alts || []).forEach((u) => {
+      if (u && !imgs.includes(u)) imgs.push(u);
+    });
+    return imgs;
+  }
+
+  function hasMultipleImages(p) {
+    return imageList(p).length >= 2;
+  }
+
   function deltaList(p) {
     const d = p.deltas || {};
     return Object.keys(d);
@@ -687,6 +764,7 @@
 
       if (state.view === 'copy' && !hasCopyNews(p)) return false;
       if (state.view === 'features' && !hasFeatureNews(p)) return false;
+      if (state.view === 'images' && !hasMultipleImages(p)) return false;
 
       if (!q) return true;
       const hay = [
@@ -697,6 +775,9 @@
         p.fields && p.fields.namePrefix,
         p.fields && p.fields.nameSuffix,
         p.fields && p.fields.features,
+        p.fields && p.fields.cdpDefaultImage,
+        p.fields && p.fields.cdpMouseOverImage,
+        p.fields && p.fields.altImages,
         deltaList(p).join(' '),
       ].join(' ').toLowerCase();
       return hay.includes(q);
@@ -742,6 +823,15 @@
     return url + (url.includes('?') ? '&' : '?') + 'v=' + encodeURIComponent(v);
   }
 
+  function mouseoverUrl(p) {
+    if (p.images && p.images.mouseover) return p.images.mouseover;
+    const name = p.fields && p.fields.cdpMouseOverImage;
+    if (!name || name === '—' || !String(name).trim()) return '';
+    const s = String(name).trim();
+    if (/^https?:\/\//i.test(s)) return s;
+    return 'https://content.la-z-boy.com/img/product/categoryalt/' + s.replace(/^\//, '');
+  }
+
   function galleryHtml(p) {
     const imgs = [];
     if (p.images && p.images.primary) imgs.push(p.images.primary);
@@ -759,10 +849,27 @@
         <img src="${esc(ub)}" alt="" loading="lazy" referrerpolicy="no-referrer">
       </button>`;
     }).join('');
+
+    const mo = mouseoverUrl(p);
+    const moName = (p.fields && p.fields.cdpMouseOverImage) || (mo && mo.split('/').pop()) || '';
+    const moPanel = mo
+      ? `<div class="mouseover-panel">
+          <div class="mo-label">Mouseover (PLP hover)</div>
+          <div class="mo-filename">${esc(moName)}</div>
+          <div class="mo-frame">
+            <img src="${esc(cacheBust(mo))}" alt="Mouseover" loading="lazy" referrerpolicy="no-referrer">
+          </div>
+        </div>`
+      : `<div class="mouseover-panel">
+          <div class="mo-label">Mouseover (PLP hover)</div>
+          <div class="mo-empty">None — no cdpMouseOverImage</div>
+        </div>`;
+
     return `
       <div class="gallery">
         <div class="hero">${hero}</div>
         ${thumbs ? `<div class="thumbs">${thumbs}</div>` : ''}
+        ${moPanel}
       </div>`;
   }
 
@@ -809,7 +916,11 @@
     const deltaMap = p.deltaFieldKeys || {};
     const deltas = p.deltas || {};
     const offlineReasons = p.offlineReasons || [];
-    const order = state.view === 'features' ? FEATURE_VIEW_FIELDS : FIELD_ORDER;
+    const order = state.view === 'features'
+      ? FEATURE_VIEW_FIELDS
+      : state.view === 'images'
+        ? IMAGE_VIEW_FIELDS
+        : FIELD_ORDER;
     const rows = order.map((k) => {
       let v = p.fields[k];
       if (v == null || v === '') v = '—';
@@ -859,14 +970,23 @@
         : (deltas.features
           ? `<p class="no-delta-note"><strong>Green +</strong> = new vs live · <strong>plain</strong> = already on live · <strong>red −</strong> = on live but we are not keeping (e.g. Buried).</p>`
           : `<p class="no-delta-note">Feature set matches live BCC.</p>`);
+    } else if (state.view === 'images') {
+      const n = imageList(p).length;
+      const mo = p.fields && p.fields.cdpMouseOverImage;
+      note = `<p class="no-delta-note"><strong>${n}</strong> image URL(s) · primary + alts in gallery · mouseover: <code>${esc(mo || '—')}</code>. Click thumbs to compare (category vs change-state).</p>`;
     } else if (kindOf(p) === 'live') {
       note = `<p class="no-delta-note">In BCC with <strong>no field deltas</strong> vs live — nothing green to highlight.</p>`;
     } else if (kindOf(p) === 'update') {
       note = `<p class="no-delta-note"><strong>${nDelta}</strong> field(s) differ from live BCC (green rows), including features when tagged differently.</p>`;
     }
 
+    const label = state.view === 'features'
+      ? 'Feature context'
+      : state.view === 'images'
+        ? 'Image fields'
+        : 'Import fields';
     return `
-      <div class="section-label">${state.view === 'features' ? 'Feature context' : 'Import fields'}</div>
+      <div class="section-label">${label}</div>
       ${note}
       <table class="fields">${rows}</table>`;
   }
@@ -1014,12 +1134,12 @@
 
     const focus = state.view;
     const showFields = focus !== 'copy';
-    const showCopy = focus !== 'features';
+    const showCopy = focus !== 'features' && focus !== 'images';
     const copyBlocks = showCopy ? COPY_FIELDS.map((f) => copyBlockHtml(p, f)).join('') : '';
     const hasCopyBlocks = !!copyBlocks.trim();
 
     // Focused views: less chrome (notes/blockers)
-    const slim = focus === 'copy' || focus === 'features';
+    const slim = focus === 'copy' || focus === 'features' || focus === 'images';
     const notes = (!slim && p.notes)
       ? `<div class="notes"><strong>Notes:</strong> ${esc(p.notes)}</div>`
       : '';
@@ -1028,7 +1148,13 @@
       : '';
     const showChips = focus === 'all' && chips;
 
-    const cardClass = focus === 'copy' ? ' copy-focus' : focus === 'features' ? ' features-focus' : '';
+    const cardClass = focus === 'copy'
+      ? ' copy-focus'
+      : focus === 'features'
+        ? ' features-focus'
+        : focus === 'images'
+          ? ' images-focus'
+          : '';
 
     return `
       <article class="card${cardClass}" id="sku-${esc(p.sku)}" data-sku="${esc(p.sku)}">
@@ -1065,6 +1191,9 @@
       parts.push(`Copy view: products with new/changed merch copy only; field table and unchanged copy hidden. Wording Δ: ${m.copyWordingChanged}.`);
     } else if (state.view === 'features') {
       parts.push(`Features view: products with feature tags to review (live Δ or create). Feature deltas: ${m.featureDeltas || 0}. Image + feature context only.`);
+    } else if (state.view === 'images') {
+      const nMulti = (state.data.products || []).filter(hasMultipleImages).length;
+      parts.push(`Images view: only SKUs with 2+ images (primary + alts). ${nMulti} multi-image products. Gallery + image fields only — use thumbs to check category vs change-state.`);
     }
     $('filterHint').textContent = parts.join(' ');
   }
@@ -1173,9 +1302,9 @@
       if (params.get('online') === '0' || params.get('online') === 'false') {
         state.online = 'false'; $('online').value = 'false';
       }
-      // view=copy|features|all  (legacy: newCopy=1 / copyOnly=1 → copy)
+      // view=copy|features|images|all  (legacy: newCopy=1 / copyOnly=1 → copy)
       const viewParam = params.get('view');
-      if (viewParam === 'copy' || viewParam === 'features' || viewParam === 'all') {
+      if (viewParam === 'copy' || viewParam === 'features' || viewParam === 'images' || viewParam === 'all') {
         state.view = viewParam;
         $('view').value = state.view;
       } else if (params.get('newCopy') === '1' || params.get('copyOnly') === '1') {
