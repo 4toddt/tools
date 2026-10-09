@@ -1,5 +1,5 @@
 {
- "changedAt": "2026-10-09T14:55:19+00:00",
+ "changedAt": "2026-10-09T15:05:51+00:00",
  "promos": {
   "clearance-event": "Clearance Event",
   "fall-cozy": "Fall/Cozy",
@@ -2324,17 +2324,6 @@
    "country": "US",
    "type": "CLS",
    "calendar": "design-days-25",
-   "override": null
-  },
-  {
-   "id": "Corporate",
-   "name": "La-Z-Boy, Inc. Corporate Headquarters",
-   "address": "1 La-Z-Boy Drive",
-   "city": "Monroe",
-   "region": "MI",
-   "country": "US",
-   "type": "CLS",
-   "calendar": null,
    "override": null
   },
   {

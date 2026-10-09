@@ -30,7 +30,7 @@ Regenerate data from the monorepo:
 ### store-promos/
 What each open store's promo banner is today (override, else calendar), from
 Yext. Static page reads `data.json`, which `build_data.py` writes from the
-Knowledge API; the hourly `.github/workflows/store-promos.yml` runs it with
+Knowledge API; the 15-minute `.github/workflows/store-promos.yml` runs it with
 the `YEXT_API_KEY` secret and commits only on change. Public page: no contact
 fields, no future promos. See `store-promos/README.md`.
 

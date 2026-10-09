@@ -65,6 +65,7 @@
   .badge.override { background: var(--hot-soft); border-color: #EBC3B8; color: var(--hot); }
   .badge.none { border-style: dashed; }
   .unassigned { color: var(--hot); font-weight: 600; }
+  button.link { border: 0; background: none; padding: 0; cursor: pointer; text-decoration: underline; }
 
   .group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
   .group img, .group .noart { display: block; width: 100%; aspect-ratio: 2880 / 400; background: var(--border-soft); }
@@ -88,7 +89,7 @@
         <button data-v="">US + CA</button><button data-v="US">US</button><button data-v="CA">CA</button>
       </div>
       <div class="seg" data-key="source" aria-label="Source">
-        <button data-v="">Any source</button><button data-v="calendar">Calendar</button><button data-v="override">Override</button><button data-v="none" title="No override or calendar promo">None</button>
+        <button data-v="">Any source</button><button data-v="calendar">Calendar</button><button data-v="override">Override</button>
       </div>
       <select id="promo" aria-label="Promo"></select>
       <div class="seg" data-key="view" aria-label="View">
@@ -196,8 +197,16 @@ function render() {
 
   const stores = data.stores.filter(matches);
   const promos = new Set(stores.map(shown).filter(Boolean)).size;
-  document.getElementById("count").textContent =
-    `${stores.length} of ${data.stores.length} stores · ${promos} promo${promos === 1 ? "" : "s"}`;
+  const unassigned = stores.filter((s) => !shown(s)).length;
+  document.getElementById("count").innerHTML =
+    `${stores.length} of ${data.stores.length} stores · ${promos} promo${promos === 1 ? "" : "s"}` +
+    (unassigned && state.promo !== NONE
+      ? ` · <button class="link unassigned" id="show-unassigned">${unassigned} with ${UNASSIGNED.toLowerCase()}</button>`
+      : "");
+  document.getElementById("show-unassigned")?.addEventListener("click", () => {
+    state.promo = document.getElementById("promo").value = NONE;
+    render();
+  });
   document.getElementById("out").innerHTML = stores.length
     ? (state.view === "banners" ? bannerView : textView)(stores)
     : `<p class="empty">No stores match.</p>`;
@@ -226,7 +235,7 @@ async function main() {
   const when = new Date(data.changedAt);
   document.getElementById("meta").textContent =
     `What each open store shows today: its Promo Override if set, otherwise its Promo Calendar. ` +
-    `From Yext, checked hourly; last change ${ago(data.changedAt)} ` +
+    `From Yext, checked every 15 minutes; last change ${ago(data.changedAt)} ` +
     `(${when.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}).`;
   fillPromoSelect();
 

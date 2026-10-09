@@ -6,9 +6,12 @@ Override (`c_promoOverride`) if set, otherwise its Promo Calendar (`c_promo`).
 - **Live:** https://4toddt.github.io/tools/store-promos/
 - **Views:** Text (one row per store) or Banners (each promo's desktop banner
   once, with one row per store underneath).
-- **Filters:** ILS (Independent, Yext label 38347) or CLS (everything else),
-  country, calendar vs override, promo, search. Filters are kept in the URL,
-  e.g. `?type=ILS&source=override&view=banners`.
+- **Filters:** ILS (Yext label 38347) or CLS (label 38324), country,
+  calendar vs override, promo, search. Filters are kept in the URL, e.g.
+  `?type=ILS&source=override&view=banners`.
+- **Stores:** open locations with the ILS or CLS label. Other locations, like
+  Corporate HQ, are left out. A store with no override or calendar promo is
+  shown as "No banner assigned" and counted in the header.
 
 ## Data
 
@@ -17,7 +20,7 @@ type, and promo slugs, plus names for the promos in use today. No contact
 details, and no promos that haven't started, because the page is public.
 
 The page never sees a Yext key. `.github/workflows/store-promos.yml` runs
-`build_data.py` hourly with the `YEXT_API_KEY` repo secret and commits
+`build_data.py` every 15 minutes with the `YEXT_API_KEY` repo secret and commits
 `data.json` only when a store's promo changes. To refresh by hand:
 
 ```bash
