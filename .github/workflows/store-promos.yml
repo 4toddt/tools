@@ -1,0 +1,36 @@
+name: store-promos data
+
+on:
+  schedule:
+    - cron: "17 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: store-promos
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    env:
+      YEXT_API_KEY: ${{ secrets.YEXT_API_KEY }}
+    steps:
+      - name: Skip without a Yext key
+        if: env.YEXT_API_KEY == ''
+        run: echo "::notice::Add the YEXT_API_KEY repo secret to refresh store-promos/data.json."
+      - uses: actions/checkout@v4
+        if: env.YEXT_API_KEY != ''
+      - name: Pull store promos from Yext
+        if: env.YEXT_API_KEY != ''
+        run: python3 store-promos/build_data.py
+      - name: Commit if changed
+        if: env.YEXT_API_KEY != ''
+        run: |
+          git diff --quiet -- store-promos/data.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "store-promos: refresh from Yext" -- store-promos/data.json
+          git push

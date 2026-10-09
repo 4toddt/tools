@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store promos</title>
+<meta name="description" content="The promo banner each open La-Z-Boy store shows today, from Yext.">
+<meta name="author" content="Todd Townsend">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#003349">
+<link rel="icon" href="../favicon.svg" type="image/svg+xml">
+<style>
+  :root {
+    --bg: #F5F3EE;
+    --surface: #ffffff;
+    --border: #E6E2D5;
+    --border-soft: #EEEAE0;
+    --ink: #1a1a1a;
+    --muted: #757575;
+    --accent: #003349;
+    --hot: #BD472A;
+    --hot-soft: #F7E3DE;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 14px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  button, input, select { font: inherit; }
+
+  .chrome {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(245, 243, 238, 0.96);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: .75rem 1rem .85rem;
+  }
+  .wrap { max-width: 1100px; margin: 0 auto; }
+  h1 { margin: 0 0 .15rem; font-size: 1.05rem; font-weight: 650; color: var(--accent); }
+  .meta { color: var(--muted); font-size: .8rem; margin-bottom: .65rem; }
+  .filters { display: flex; flex-wrap: wrap; gap: .45rem .55rem; align-items: center; }
+  .filters input[type="search"], .filters select {
+    padding: .35rem .55rem; border: 1px solid var(--border); border-radius: 6px; background: var(--surface);
+  }
+  .filters input[type="search"] { min-width: 14rem; flex: 1 1 14rem; max-width: 22rem; }
+  .seg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: var(--surface); }
+  .seg button { border: 0; background: none; padding: .35rem .65rem; cursor: pointer; color: var(--ink); }
+  .seg button + button { border-left: 1px solid var(--border); }
+  .seg button[aria-pressed="true"] { background: var(--accent); color: #fff; }
+
+  main { padding: 1rem; }
+  .count { color: var(--muted); margin: 0 0 .75rem; }
+  .empty { color: var(--muted); padding: 2rem 0; text-align: center; }
+
+  table { width: 100%; border-collapse: collapse; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+  th, td { text-align: left; padding: .45rem .65rem; border-bottom: 1px solid var(--border-soft); vertical-align: top; }
+  th { font-size: .75rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; background: #FBFAF7; }
+  tr:last-child td { border-bottom: 0; }
+  .sub { color: var(--muted); font-size: .8rem; }
+  .slug { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .75rem; color: var(--muted); }
+  .badge { display: inline-block; font-size: .7rem; font-weight: 600; padding: .05rem .4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+  .badge.override { background: var(--hot-soft); border-color: #EBC3B8; color: var(--hot); }
+
+  .group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
+  .group img, .group .noart { display: block; width: 100%; aspect-ratio: 2880 / 400; background: var(--border-soft); }
+  .group .noart { display: grid; place-items: center; color: var(--muted); font-size: .8rem; }
+  .group header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: .6rem .8rem .3rem; }
+  .group h2 { margin: 0; font-size: .95rem; color: var(--accent); }
+  .group ul { list-style: none; margin: 0; padding: .2rem .8rem .8rem; display: flex; flex-wrap: wrap; gap: .3rem; }
+  .group li { border: 1px solid var(--border-soft); border-radius: 5px; padding: .15rem .45rem; font-size: .8rem; }
+  .group li.override { border-color: #EBC3B8; background: #FDF6F4; }
+</style>
+</head>
+<body>
+<div class="chrome">
+  <div class="wrap">
+    <h1>Store promos</h1>
+    <div class="meta" id="meta">Loading…</div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search store, city, state, promo" aria-label="Search">
+      <div class="seg" data-key="type" aria-label="Store type">
+        <button data-v="">All</button><button data-v="ILS" title="Independent licensed stores">ILS</button><button data-v="CLS" title="Company-owned stores">CLS</button>
+      </div>
+      <div class="seg" data-key="country" aria-label="Country">
+        <button data-v="">US + CA</button><button data-v="US">US</button><button data-v="CA">CA</button>
+      </div>
+      <div class="seg" data-key="source" aria-label="Source">
+        <button data-v="">Any source</button><button data-v="calendar">Calendar</button><button data-v="override">Override</button>
+      </div>
+      <select id="promo" aria-label="Promo"></select>
+      <div class="seg" data-key="view" aria-label="View">
+        <button data-v="">Text</button><button data-v="banners">Banners</button>
+      </div>
+    </div>
+  </div>
+</div>
+<main class="wrap">
+  <p class="count" id="count"></p>
+  <div id="out"></div>
+</main>
+
+<script>
+const DATA_URL = "data.json";
+const CDN = "https://content.la-z-boy.com/img/promos";
+
+const state = Object.fromEntries(["q", "type", "country", "source", "promo", "view"]
+  .map((k) => [k, new URLSearchParams(location.search).get(k) || ""]));
+let data;
+
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+const NONE = "none";
+const shown = (s) => s.override || s.calendar || "";
+const promoKey = (s) => shown(s) || NONE;
+const promoName = (slug) => slug ? data.promos[slug] || slug : "Nothing set";
+const where = (s) => [s.city, s.region].filter(Boolean).join(", ");
+
+function ago(iso) {
+  const min = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (min < 1) return "just now";
+  if (min < 60) return `${min} min ago`;
+  const h = Math.round(min / 60);
+  return h < 48 ? `${h} hr ago` : `${Math.round(h / 24)} days ago`;
+}
+
+function matches(s) {
+  if (state.type && s.type !== state.type) return false;
+  if (state.country && s.country !== state.country) return false;
+  if (state.source === "override" && !s.override) return false;
+  if (state.source === "calendar" && s.override) return false;
+  if (state.promo && promoKey(s) !== state.promo) return false;
+  if (!state.q) return true;
+  const hay = [s.name, s.address, s.city, s.region, s.id, shown(s), promoName(shown(s)), s.calendar].join(" ").toLowerCase();
+  return state.q.toLowerCase().split(/\s+/).every((w) => hay.includes(w));
+}
+
+function sourceCell(s) {
+  return s.override
+    ? `<span class="badge override">Override</span><div class="sub">calendar: <span class="slug">${esc(s.calendar || "none")}</span></div>`
+    : `<span class="badge">Calendar</span>`;
+}
+
+function textView(stores) {
+  return `<table>
+    <thead><tr><th>Store</th><th>Location</th><th>Type</th><th>Showing</th><th>Source</th></tr></thead>
+    <tbody>${stores.map((s) => `<tr>
+      <td>${esc(s.name)}<div class="sub">${esc(s.address)}</div></td>
+      <td>${esc(where(s))}<div class="sub">${esc(s.country)}</div></td>
+      <td><span class="badge" title="${s.type === "ILS" ? "Independent" : "Company-owned"}">${s.type}</span></td>
+      <td>${esc(promoName(shown(s)))}<div class="slug">${esc(shown(s) || "")}</div></td>
+      <td>${sourceCell(s)}</td>
+    </tr>`).join("")}</tbody></table>`;
+}
+
+function bannerView(stores) {
+  const groups = new Map();
+  for (const s of stores) {
+    const k = shown(s) || "";
+    groups.set(k, [...(groups.get(k) || []), s]);
+  }
+  return [...groups].sort((a, b) => b[1].length - a[1].length).map(([slug, list]) => {
+    const art = slug
+      ? `<img src="${CDN}/${encodeURIComponent(slug)}/desktop.png?width=1100" alt="${esc(promoName(slug))} banner" loading="lazy"
+           onerror="this.outerHTML='<div class=&quot;noart&quot;>No banner on the CDN</div>'">`
+      : `<div class="noart">No promo set</div>`;
+    const overrides = list.filter((s) => s.override).length;
+    return `<section class="group">${art}
+      <header><h2>${esc(promoName(slug))} <span class="slug">${esc(slug)}</span></h2>
+        <span class="sub">${list.length} store${list.length === 1 ? "" : "s"}${overrides ? `, ${overrides} by override` : ""}</span></header>
+      <ul>${list.map((s) => `<li class="${s.override ? "override" : ""}" title="${esc(s.address)} · ${s.type}${s.override ? " · override" : ""}">${esc(s.name.replace(/^La-Z-Boy\s+/, ""))} <span class="sub">${esc(s.region)}</span></li>`).join("")}</ul>
+    </section>`;
+  }).join("");
+}
+
+function render() {
+  for (const seg of document.querySelectorAll(".seg")) {
+    for (const b of seg.querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.v === state[seg.dataset.key]));
+  }
+  const params = new URLSearchParams(Object.entries(state).filter(([, v]) => v));
+  history.replaceState(null, "", params.toString() ? `?${params}` : location.pathname);
+
+  const stores = data.stores.filter(matches);
+  const promos = new Set(stores.map(shown)).size;
+  document.getElementById("count").textContent =
+    `${stores.length} of ${data.stores.length} stores · ${promos} promo${promos === 1 ? "" : "s"}`;
+  document.getElementById("out").innerHTML = stores.length
+    ? (state.view === "banners" ? bannerView : textView)(stores)
+    : `<p class="empty">No stores match.</p>`;
+}
+
+function fillPromoSelect() {
+  const counts = new Map();
+  for (const s of data.stores) counts.set(promoKey(s), (counts.get(promoKey(s)) || 0) + 1);
+  const label = (key) => promoName(key === NONE ? "" : key);
+  const opts = [...counts].sort((a, b) => label(a[0]).localeCompare(label(b[0])))
+    .map(([key, n]) => `<option value="${esc(key)}">${esc(label(key))} (${n})</option>`);
+  const select = document.getElementById("promo");
+  select.innerHTML = `<option value="">All promos</option>${opts.join("")}`;
+  select.value = state.promo;
+}
+
+async function main() {
+  try {
+    const res = await fetch(DATA_URL, { cache: "no-cache" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    data = await res.json();
+  } catch (err) {
+    document.getElementById("meta").textContent = `Couldn't load store data (${err.message}).`;
+    return;
+  }
+  const when = new Date(data.changedAt);
+  document.getElementById("meta").textContent =
+    `What each open store shows today: its Promo Override if set, otherwise its Promo Calendar. ` +
+    `From Yext, checked hourly; last change ${ago(data.changedAt)} ` +
+    `(${when.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}).`;
+  fillPromoSelect();
+
+  const q = document.getElementById("q");
+  q.value = state.q;
+  q.addEventListener("input", () => { state.q = q.value.trim(); render(); });
+  document.getElementById("promo").addEventListener("change", (e) => { state.promo = e.target.value; render(); });
+  for (const seg of document.querySelectorAll(".seg")) {
+    seg.addEventListener("click", (e) => {
+      const b = e.target.closest("button");
+      if (b) { state[seg.dataset.key] = b.dataset.v; render(); }
+    });
+  }
+  render();
+}
+main();
+</script>
+</body>
+</html>
