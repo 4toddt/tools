@@ -67,11 +67,9 @@
   .group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
   .group img, .group .noart { display: block; width: 100%; aspect-ratio: 2880 / 400; background: var(--border-soft); }
   .group .noart { display: grid; place-items: center; color: var(--muted); font-size: .8rem; }
-  .group header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: .6rem .8rem .3rem; }
+  .group header { display: flex; justify-content: space-between; gap: 1rem; align-items: baseline; padding: .6rem .8rem .5rem; border-bottom: 1px solid var(--border-soft); }
   .group h2 { margin: 0; font-size: .95rem; color: var(--accent); }
-  .group ul { list-style: none; margin: 0; padding: .2rem .8rem .8rem; display: flex; flex-wrap: wrap; gap: .3rem; }
-  .group li { border: 1px solid var(--border-soft); border-radius: 5px; padding: .15rem .45rem; font-size: .8rem; }
-  .group li.override { border-color: #EBC3B8; background: #FDF6F4; }
+  .group table { border: 0; border-radius: 0; }
 </style>
 </head>
 <body>
@@ -142,17 +140,19 @@ function sourceCell(s) {
     : `<span class="badge">Calendar</span>`;
 }
 
-function textView(stores) {
+function storeTable(stores, { showing }) {
   return `<table>
-    <thead><tr><th>Store</th><th>Location</th><th>Type</th><th>Showing</th><th>Source</th></tr></thead>
+    <thead><tr><th>Store</th><th>Location</th><th>Type</th>${showing ? "<th>Showing</th>" : ""}<th>Source</th></tr></thead>
     <tbody>${stores.map((s) => `<tr>
       <td>${esc(s.name)}<div class="sub">${esc(s.address)}</div></td>
       <td>${esc(where(s))}<div class="sub">${esc(s.country)}</div></td>
       <td><span class="badge" title="${s.type === "ILS" ? "Independent" : "Company-owned"}">${s.type}</span></td>
-      <td>${esc(promoName(shown(s)))}<div class="slug">${esc(shown(s) || "")}</div></td>
+      ${showing ? `<td>${esc(promoName(shown(s)))}<div class="slug">${esc(shown(s))}</div></td>` : ""}
       <td>${sourceCell(s)}</td>
     </tr>`).join("")}</tbody></table>`;
 }
+
+const textView = (stores) => storeTable(stores, { showing: true });
 
 function bannerView(stores) {
   const groups = new Map();
@@ -169,7 +169,7 @@ function bannerView(stores) {
     return `<section class="group">${art}
       <header><h2>${esc(promoName(slug))} <span class="slug">${esc(slug)}</span></h2>
         <span class="sub">${list.length} store${list.length === 1 ? "" : "s"}${overrides ? `, ${overrides} by override` : ""}</span></header>
-      <ul>${list.map((s) => `<li class="${s.override ? "override" : ""}" title="${esc(s.address)} · ${s.type}${s.override ? " · override" : ""}">${esc(s.name.replace(/^La-Z-Boy\s+/, ""))} <span class="sub">${esc(s.region)}</span></li>`).join("")}</ul>
+      ${storeTable(list, { showing: false })}
     </section>`;
   }).join("");
 }
