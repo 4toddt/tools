@@ -27,6 +27,13 @@ Regenerate data from the monorepo:
 `casegood-review/README.md` (or the project’s round2 merge) so
 `tools/casegood-review/data.js` stays current before publishing Pages.
 
+### store-promos/
+What each open store's promo banner is today (override, else calendar), from
+Yext. Static page reads `data.json`, which `build_data.py` writes from the
+Knowledge API; the hourly `.github/workflows/store-promos.yml` runs it with
+the `YEXT_API_KEY` secret and commits only on change. Public page: no contact
+fields, no future promos. See `store-promos/README.md`.
+
 ### cover-data/
 XLSX → JSON extractor for the Cover Information List spreadsheet.
 Vanilla JS + SheetJS Community 0.18.5 (jsdelivr CDN, SRI-pinned).
