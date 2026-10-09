@@ -63,6 +63,8 @@
   .slug { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .75rem; color: var(--muted); }
   .badge { display: inline-block; font-size: .7rem; font-weight: 600; padding: .05rem .4rem; border-radius: 4px; border: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
   .badge.override { background: var(--hot-soft); border-color: #EBC3B8; color: var(--hot); }
+  .badge.none { border-style: dashed; }
+  .unassigned { color: var(--hot); font-weight: 600; }
 
   .group { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1rem; overflow: hidden; }
   .group img, .group .noart { display: block; width: 100%; aspect-ratio: 2880 / 400; background: var(--border-soft); }
@@ -86,7 +88,7 @@
         <button data-v="">US + CA</button><button data-v="US">US</button><button data-v="CA">CA</button>
       </div>
       <div class="seg" data-key="source" aria-label="Source">
-        <button data-v="">Any source</button><button data-v="calendar">Calendar</button><button data-v="override">Override</button>
+        <button data-v="">Any source</button><button data-v="calendar">Calendar</button><button data-v="override">Override</button><button data-v="none" title="No override or calendar promo">None</button>
       </div>
       <select id="promo" aria-label="Promo"></select>
       <div class="seg" data-key="view" aria-label="View">
@@ -112,7 +114,9 @@ const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(
 const NONE = "none";
 const shown = (s) => s.override || s.calendar || "";
 const promoKey = (s) => shown(s) || NONE;
-const promoName = (slug) => slug ? data.promos[slug] || slug : "Nothing set";
+const source = (s) => (s.override ? "override" : s.calendar ? "calendar" : NONE);
+const UNASSIGNED = "No banner assigned";
+const promoName = (slug) => slug ? data.promos[slug] || slug : UNASSIGNED;
 const where = (s) => [s.city, s.region].filter(Boolean).join(", ");
 
 function ago(iso) {
@@ -126,8 +130,7 @@ function ago(iso) {
 function matches(s) {
   if (state.type && s.type !== state.type) return false;
   if (state.country && s.country !== state.country) return false;
-  if (state.source === "override" && !s.override) return false;
-  if (state.source === "calendar" && s.override) return false;
+  if (state.source && source(s) !== state.source) return false;
   if (state.promo && promoKey(s) !== state.promo) return false;
   if (!state.q) return true;
   const hay = [s.name, s.address, s.city, s.region, s.id, shown(s), promoName(shown(s)), s.calendar].join(" ").toLowerCase();
@@ -135,9 +138,17 @@ function matches(s) {
 }
 
 function sourceCell(s) {
-  return s.override
-    ? `<span class="badge override">Override</span><div class="sub">calendar: <span class="slug">${esc(s.calendar || "none")}</span></div>`
-    : `<span class="badge">Calendar</span>`;
+  return {
+    override: () => `<span class="badge override">Override</span><div class="sub">calendar: <span class="slug">${esc(s.calendar || "none")}</span></div>`,
+    calendar: () => `<span class="badge">Calendar</span>`,
+    [NONE]: () => `<span class="badge none">None</span>`,
+  }[source(s)]();
+}
+
+function showingCell(s) {
+  return shown(s)
+    ? `${esc(promoName(shown(s)))}<div class="slug">${esc(shown(s))}</div>`
+    : `<span class="unassigned">${UNASSIGNED}</span><div class="sub">no override or calendar promo</div>`;
 }
 
 function storeTable(stores, { showing }) {
@@ -147,7 +158,7 @@ function storeTable(stores, { showing }) {
       <td>${esc(s.name)}<div class="sub">${esc(s.address)}</div></td>
       <td>${esc(where(s))}<div class="sub">${esc(s.country)}</div></td>
       <td><span class="badge" title="${s.type === "ILS" ? "Independent" : "Company-owned"}">${s.type}</span></td>
-      ${showing ? `<td>${esc(promoName(shown(s)))}<div class="slug">${esc(shown(s))}</div></td>` : ""}
+      ${showing ? `<td>${showingCell(s)}</td>` : ""}
       <td>${sourceCell(s)}</td>
     </tr>`).join("")}</tbody></table>`;
 }
@@ -160,11 +171,13 @@ function bannerView(stores) {
     const k = shown(s) || "";
     groups.set(k, [...(groups.get(k) || []), s]);
   }
-  return [...groups].sort((a, b) => b[1].length - a[1].length).map(([slug, list]) => {
+  // Biggest groups first; stores with no banner assigned always last.
+  const order = ([slug, list]) => (slug ? -list.length : Infinity);
+  return [...groups].sort((a, b) => order(a) - order(b)).map(([slug, list]) => {
     const art = slug
       ? `<img src="${CDN}/${encodeURIComponent(slug)}/desktop.png?width=1100" alt="${esc(promoName(slug))} banner" loading="lazy"
-           onerror="this.outerHTML='<div class=&quot;noart&quot;>No banner on the CDN</div>'">`
-      : `<div class="noart">No promo set</div>`;
+           onerror="this.outerHTML='<div class=&quot;noart&quot;>No banner image on the CDN for this promo</div>'">`
+      : `<div class="noart">${UNASSIGNED}: no override or calendar promo</div>`;
     const overrides = list.filter((s) => s.override).length;
     return `<section class="group">${art}
       <header><h2>${esc(promoName(slug))} <span class="slug">${esc(slug)}</span></h2>
@@ -182,7 +195,7 @@ function render() {
   history.replaceState(null, "", params.toString() ? `?${params}` : location.pathname);
 
   const stores = data.stores.filter(matches);
-  const promos = new Set(stores.map(shown)).size;
+  const promos = new Set(stores.map(shown).filter(Boolean)).size;
   document.getElementById("count").textContent =
     `${stores.length} of ${data.stores.length} stores · ${promos} promo${promos === 1 ? "" : "s"}`;
   document.getElementById("out").innerHTML = stores.length
