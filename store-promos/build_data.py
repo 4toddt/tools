@@ -21,7 +21,8 @@ from pathlib import Path
 
 API = "https://api.yext.com/v2/accounts/me/entities"
 VERSION = "20240401"
-INDEPENDENT_LABEL = "38347"
+# Every open store has one of these; other locations (Corporate HQ) have neither.
+STORE_TYPES = {"38347": "ILS", "38324": "CLS"}
 OUT = Path(__file__).with_name("data.json")
 
 
@@ -40,6 +41,10 @@ def entities(key: str, entity_type: str, fields: str):
         params["pageToken"] = page["pageToken"]
 
 
+def store_type(e: dict) -> str:
+    return next((t for label, t in STORE_TYPES.items() if label in ((e.get("meta") or {}).get("labels") or [])), "")
+
+
 def store(e: dict) -> dict:
     a, meta = e.get("address") or {}, e.get("meta") or {}
     city = a.get("city", "")
@@ -53,7 +58,7 @@ def store(e: dict) -> dict:
         "city": city,
         "region": a.get("region", ""),
         "country": a.get("countryCode", ""),
-        "type": "ILS" if INDEPENDENT_LABEL in (meta.get("labels") or []) else "CLS",
+        "type": store_type(e),
         "calendar": promo("c_promo"),
         "override": promo("c_promoOverride"),
     }
@@ -65,7 +70,7 @@ def main() -> None:
         sys.exit("Set YEXT_API_KEY.")
     promos = {e["meta"]["id"]: e.get("name", "") for e in entities(key, "ce_promotion", "name")}
     stores = [store(e) for e in entities(key, "location", "name,address,closed,c_promo,c_promoOverride")
-              if not e.get("closed")]
+              if not e.get("closed") and store_type(e)]
     stores.sort(key=lambda s: (s["country"], s["region"], s["city"], s["name"]))
     # Names for today's promos only; the full list would name sales that haven't started.
     in_use = {s[f] for s in stores for f in ("calendar", "override") if s[f]}
