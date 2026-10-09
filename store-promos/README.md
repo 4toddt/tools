@@ -5,7 +5,7 @@ Override (`c_promoOverride`) if set, otherwise its Promo Calendar (`c_promo`).
 
 - **Live:** https://4toddt.github.io/tools/store-promos/
 - **Views:** Text (one row per store) or Banners (each promo's desktop banner
-  once, with its stores underneath; overrides tinted).
+  once, with one row per store underneath).
 - **Filters:** ILS (Independent, Yext label 38347) or CLS (everything else),
   country, calendar vs override, promo, search. Filters are kept in the URL,
   e.g. `?type=ILS&source=override&view=banners`.
