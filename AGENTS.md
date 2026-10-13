@@ -14,9 +14,3 @@ belong here: La-Z-Boy tool pages live in the private `dev` repo under
 - No build step, no package manager
 - External CDN deps avoided when possible; when used, pin with SRI hash
 - Root `index.html` lists all tools
-
-## Still to move out
-
-`bcc-cover-sku-reconciliation/` holds La-Z-Boy work notes plus BCC exports and
-Merchandising cover workbooks. Its own note says to delete it after the first
-BCC cover import is verified.
