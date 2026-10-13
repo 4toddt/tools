@@ -6,9 +6,11 @@ reference. Hosted via GitHub Pages at
 
 ## What's here
 
-- [`/fiscal/`](https://4toddt.github.io/tools/fiscal/) — La-Z-Boy 5-4-4
-  fiscal calendar (NRF-style). Last Saturday of April year-end, with a 53rd
-  week added when the calendar requires it.
+- [`/essays/`](https://4toddt.github.io/tools/essays/) — static essay pages.
+
+Work tools (fiscal calendar, cover data extractor, store promos) moved off
+this repo in October 2026. Nothing work-related or company data belongs here:
+the repo and its Pages site are public.
 
 ## Conventions
 
